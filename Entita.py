@@ -1,8 +1,10 @@
 from abc import ABC
+from Oggetto import Oggetto
 
 
-class Entita(ABC):
+class Entita(Oggetto, ABC):
     def __init__(self):
+        super().__init__()
         self.nome = ""
         self.vita = 10
         self.ferite = 0
@@ -13,8 +15,9 @@ class Entita(ABC):
         self.priorita = 0
         self.risorsa = []
         self.slot_inventario = 1
+        self.z = 0
 
-    def add_inventario(self,risorsa):
+    def add_inventario(self, risorsa):
         if len(self.risorsa) < self.slot_inventario:
             self.risorsa.append(risorsa)
 
