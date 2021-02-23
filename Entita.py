@@ -16,3 +16,5 @@ class Entita(Oggetto, ABC):
         if len(self.risorsa) < self.slot_inventario:
             self.risorsa.append(risorsa)
 
+    def get_damage(self,danno):
+        self.ferite += danno

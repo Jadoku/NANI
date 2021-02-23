@@ -7,16 +7,19 @@ class Livello():
         self.lista_oggetti = []
         self.lato = lato
 
-    def matrix(self):
+    def matrix(self,phase=False):
         """
-        popola la matrice con blocchi e pesi
+        popola la matrice con blocchi e pesi. se l'unità ignora i muri passa phase=True
         :return: matrice con blocchi o pesi
         """
         matrix=[]
         for i in range(self.lato):
             r = []
             for j in range(self.lato):
-                r.append(self.is_accessible(i,j))
+                if phase:
+                    r.append(1)
+                else:
+                    r.append(self.is_accessible(i,j))
             matrix.append(r)
         return matrix
 
