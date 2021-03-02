@@ -1,23 +1,26 @@
 from abc import ABC, abstractmethod
 from Entita import Entita
-from Oggetto import Cat
+from Risorsa import Risorsa
+
 
 class Unita(Entita, ABC):
-    def __init__(self,IA,mappa):
+    def __init__(self,IA):
         super().__init__()
         self.movimento = 1
         self.ai = IA
-        self.mappa = mappa
         self.portata = 1
+        self.mod_movimento = 1
 
     def muovi(self,X,Y):
         self.mappa.add_move(X,Y,self)
 
     def attacca(self,bersaglio):
-        bersaglio.get_damage(self.attacco)
+        bersaglio.get_damage(self.attacco,self)
 
-    def raccogli(self):
-        pass
+    def raccogli(self,target):
+        if len(self.inventario) < self.slot_inventario and isinstance(target, Risorsa):
+            self.inventario.append(self.mappa.remove_item(target))
+
 
     @abstractmethod
     def esegui(self,target):

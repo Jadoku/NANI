@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from Oggetto import *
 
 class Entita(Oggetto, ABC):
@@ -8,13 +8,13 @@ class Entita(Oggetto, ABC):
         self.ferite = 0
         self.attacco = 0
         self.percezione = 1
-        self.risorsa = []
+        self.inventario = []
         self.slot_inventario = 1
-        self.categoria = Cat.Entita
 
-    def add_inventario(self, risorsa):
-        if len(self.risorsa) < self.slot_inventario:
-            self.risorsa.append(risorsa)
-
-    def get_damage(self,danno):
+    def get_damage(self,danno,attaccante=None):
         self.ferite += danno
+        if self.ferite >= self.vita:
+            self.on_death()
+
+    def on_death(self):
+        self.mappa.remove_item(self)

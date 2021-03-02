@@ -4,7 +4,6 @@ from Oggetto import *
 class Pavimento(ABC, Oggetto):
     def __init__(self):
         super().__init__()
-        self.categoria = Cat.Pavimento
 
     def get_name(self):
         return self.__class__.__name__

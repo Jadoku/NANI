@@ -1,5 +1,4 @@
 from Entita import Entita
-from Oggetto import Cat
 
 class Livello():
     def __init__(self, lato: int = 31):
@@ -23,11 +22,9 @@ class Livello():
             matrix.append(r)
         return matrix
 
-    def get_coord(self, x, y, z: Cat = None):
-        if z is None:
-            return list(filter(lambda n: n.x == x and n.y == y, self.lista_oggetti)).sort(key=lambda n: n.categoria, reverse=False)
-        else:
-            return list(filter(lambda n: n.x == x and n.y == y and n.categoria == z, self.lista_oggetti))
+    def get_coord(self, x, y):
+        return list(filter(lambda n: n.x == x and n.y == y, self.lista_oggetti))
+
 
     def is_accessible(self, x, y):
         """
@@ -38,7 +35,7 @@ class Livello():
         """
         k = 0
         for i in self.get_coord(x,y):
-            if i.block:
+            if i.mod_movimento == 0:
                 return 0
             else:
                 k += i.mod_movimento
@@ -59,6 +56,7 @@ class Livello():
             oggetto.y = y
             if add:
                 self.lista_oggetti.append(oggetto)
+                oggetto.mappa = self
             return True
         else:
             print("non puoi aggiungere/muovere un oggetto in una casella occupata")
@@ -67,7 +65,7 @@ class Livello():
     def remove_item(self,oggetto):
         self.lista_oggetti.remove(oggetto)
         if isinstance(oggetto,Entita):
-            for i in oggetto.risorsa:
+            for i in oggetto.inventario:
                 self.add_move(oggetto.x,oggetto.y,i,True)
         return oggetto
 

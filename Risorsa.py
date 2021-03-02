@@ -4,7 +4,6 @@ from Oggetto import *
 class Risorsa(ABC, Oggetto):
     def __init__(self):
         super().__init__()
-        self.categoria = Cat.Risorsa
         self.mod_movimento = 0.2
 
     def get_name(self):
