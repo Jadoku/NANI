@@ -18,7 +18,7 @@ class Minatore(Nano):
         super().__init__(AI,100,2,1,5)
 
     def esegui(self, target):
-        if isinstance(target,Muro_base):
+        if isinstance(target, Muro_base):
             self.attacca(target)
 
 

@@ -13,14 +13,13 @@ class Oggetto(ABC):
         self.nome = ""
         self.mappa = None
 
-    def distanza(self,livello,bersaglio):
+    def distanza(self,bersaglio):
         """
         calcolo del percorso e della distanza pesata
-        :param livello: il livello della miniera corrente
         :param bersaglio: la coordinata bersaglio
         :return: tupla(peso totale, lista coordinate percorso)
         """
-        liv = livello.matrix()
+        liv = self.mappa.matrix()
         grid = Grid(matrix=liv)
         start = grid.node(self.x,self.y)
         end = grid.node(bersaglio.x,bersaglio.y)
