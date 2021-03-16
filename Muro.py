@@ -7,7 +7,6 @@ from Risorsa import Sassi
 class Muro(ABC,Entita):
     def __init__(self):
         super().__init__()
-        self.nascosto: bool = True
 
     def get_damage(self,danno,attaccante=None):
         super().get_damage(danno)
@@ -18,8 +17,23 @@ class Muro(ABC,Entita):
 class Muro_base(Muro):
     def __init__(self):
         super().__init__()
+        self.controllato: bool = False
         self.vita = randrange(10, 20)
         self.nome = "Roccia"
+
+    def carotami(self):
+        self.controllato = True
+        if not self.inventario:
+            self.nome = "Riserva di " + self.inventario[0].nome
+        else:
+            return "Blocco di granito"
+
+    def contenuto(self):
+        if self.controllato and not self.inventario:
+            return self.inventario[0]
+        else:
+            return []
+
 
 class Muro_ossidiana(Muro):
     def __init__(self):

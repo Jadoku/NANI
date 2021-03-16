@@ -48,5 +48,5 @@ class Unita(Entita, ABC):
             pass
 
     @abstractmethod
-    def esegui(self,target):
+    def esegui(self,target,*args):
         pass
