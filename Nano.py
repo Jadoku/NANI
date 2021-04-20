@@ -1,3 +1,4 @@
+import time
 from abc import ABC, abstractmethod
 from random import randrange
 
@@ -31,7 +32,7 @@ class Minatore(Nano):
 
     def esegui(self, target):
         if isinstance(target, Muro_base):
-            self.attacca(target)
+            self._attacca(target)
 
     def _level_up(self):
         self.slot_inventario += 1
@@ -44,28 +45,30 @@ class Guardia(Nano):
 
     def esegui(self, target):
         if isinstance(target,Unita):
-            self.attacca(target)
+            self._attacca(target)
 
     def _level_up(self):
         self.attacco += 5
         self.vita +=5
+
 
 class Cerusico(Nano):
     def __init__(self,AI):
         super().__init__(AI,100,2,1,5)
 
     def esegui(self, target):
-        if isinstance(target,Unita) and any(isinstance(x,Erbe) for x in self.inventario):
+        if isinstance(target, Unita) and any(isinstance(x, Erbe) for x in self.inventario):
+            time.sleep(2)
             for x in self.inventario:
-                if isinstance(x,Erbe):
+                if isinstance(x, Erbe):
                     del x
                     break
-            target.ferite -= min(50 + 5 * (self.livello),target.ferite)
+            target.ferite -= min(50 + 5 * (self.livello), target.ferite)
 
     def _level_up(self):
         pass
 
-
+#TODO tempo di esecuzione
 class Prospettore(Nano):
     def __init__(self,AI):
         super().__init__(AI,100,2,1,1)

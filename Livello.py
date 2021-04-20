@@ -51,18 +51,19 @@ class Livello():
         :param oggetto: oggetto da muovere o aggiungere
         :param add: se true, aggiunge un oggetto non presente sulla griglia
         :param phase: ignora se il terreno è bloccante o meno
-        :return: true se è possibile, false se non è possibile
+        :return: 0 se non è possibile, peso della casella di destinazione se possibile
         """
-        if self.check_bounds(x,y) and (bool(self.is_accessible(x,y)) or phase):
+        peso = self.is_accessible(x,y)
+        if self.check_bounds(x,y) and (bool(peso) or phase):
             oggetto.x = x
             oggetto.y = y
             if add:
                 self.lista_oggetti.append(oggetto)
                 oggetto.mappa = self
-            return True
+            return peso
         else:
             print("non puoi aggiungere/muovere un oggetto in una casella occupata")
-            return False
+            return 0
 
     def remove_item(self,oggetto):
         self.lista_oggetti.remove(oggetto)
