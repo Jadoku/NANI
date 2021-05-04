@@ -4,14 +4,14 @@ from Entita import *
 from Risorsa import Sassi
 
 
-class Muro(ABC,Entita):
+class Muro(ABC, Entita):
     def __init__(self):
         super().__init__()
 
-    def get_damage(self,danno,attaccante=None):
+    def get_damage(self, danno, attaccante=None):
         super().get_damage(danno)
         for _ in range(danno):
-            self.mappa.add_move(attaccante.x,attaccante.y,Sassi(),add=True)
+            self.mappa.add_move(attaccante.x, attaccante.y, Sassi(), add=True)
 
 
 class Muro_base(Muro):

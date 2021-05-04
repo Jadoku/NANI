@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from Oggetto import *
 
+
 class Entita(Oggetto, ABC):
     def __init__(self):
         super().__init__()
@@ -11,7 +12,7 @@ class Entita(Oggetto, ABC):
         self.inventario = []
         self.slot_inventario = 1
 
-    def get_damage(self,danno,attaccante=None):
+    def get_damage(self, danno, attaccante=None):
         self.ferite += danno
         if self.ferite >= self.vita:
             self.on_death()

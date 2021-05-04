@@ -1,19 +1,19 @@
 from abc import ABC
-from enum import Enum
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 
+
 class Oggetto(ABC):
     def __init__(self):
-        self.x=-1
-        self.y=-1
-        self.mod_movimento=0
+        self.x = -1
+        self.y = -1
+        self.mod_movimento = 0
         self.priorita = 0
         self.nome = ""
         self.mappa = None
 
-    def distanza(self,bersaglio):
+    def distanza(self, bersaglio):
         """
         calcolo del percorso e della distanza pesata
         :param bersaglio: la coordinata bersaglio
@@ -21,8 +21,8 @@ class Oggetto(ABC):
         """
         liv = self.mappa.matrix()
         grid = Grid(matrix=liv)
-        start = grid.node(self.x,self.y)
-        end = grid.node(bersaglio.x,bersaglio.y)
+        start = grid.node(self.x, self.y)
+        end = grid.node(bersaglio.x, bersaglio.y)
         finder = AStarFinder(diagonal_movement=DiagonalMovement.if_at_most_one_obstacle)
         path, runs = finder.find_path(start, end, grid)
         path = path[1:-1]

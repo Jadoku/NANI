@@ -5,10 +5,11 @@ from Risorsa import Risorsa
 from threading import Thread
 import time
 
-#TODO sistema di segnali con enum
+
+# TODO sistema di segnali con enum
 
 class Unita(Entita, ABC, Thread):
-    def __init__(self,IA):
+    def __init__(self, IA):
         super().__init__()
         self.movimento = 1
         self.ia = IA
@@ -28,11 +29,11 @@ class Unita(Entita, ABC, Thread):
         else:
             coord = self.percorso.pop(0)
             peso = self.mappa.add_move(coord[0], coord[1], self)
-            time.sleep(peso/3)
+            time.sleep(peso / 3)
 
     def _attacca(self, bersaglio):
         if self.in_range(bersaglio):
-            bersaglio.get_damage(self.attacco,self)
+            bersaglio.get_damage(self.attacco, self)
             time.sleep(0.5)
         else:
             pass
@@ -50,15 +51,15 @@ class Unita(Entita, ABC, Thread):
                 self.mappa.remove_item(target)
             time.sleep(0.2)
 
-    def in_range(self,bersaglio):
+    def in_range(self, bersaglio):
         return len(self.distanza(bersaglio)[1]) <= self.portata
 
-    def azione(self,target):
+    def azione(self, target):
         if self.in_range(target):
             self.esegui(target)
         else:
             pass
 
     @abstractmethod
-    def esegui(self,target,*args):
+    def esegui(self, target, *args):
         pass

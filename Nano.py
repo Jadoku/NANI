@@ -7,8 +7,8 @@ from Risorsa import Erbe, Cristallo
 from unita import Unita
 
 
-class Nano(Unita,ABC):
-    def __init__(self,AI,vita,attacco,percezione,inventario):
+class Nano(Unita, ABC):
+    def __init__(self, AI, vita, attacco, percezione, inventario):
         super().__init__(AI)
         self.vita = vita
         self.attacco = attacco
@@ -17,7 +17,7 @@ class Nano(Unita,ABC):
         self.livello = 0
 
     def avanzamento_livello(self):
-        self.livello +=1
+        self.livello += 1
         self.vita += 5
         self._level_up()
 
@@ -27,10 +27,10 @@ class Nano(Unita,ABC):
 
 
 class Minatore(Nano):
-    def __init__(self,AI):
-        super().__init__(AI,100,2,1,5)
+    def __init__(self, AI):
+        super().__init__(AI, 100, 2, 1, 5)
 
-    def esegui(self, target):
+    def esegui(self, target, *agrs):
         if isinstance(target, Muro_base):
             self._attacca(target)
 
@@ -40,49 +40,54 @@ class Minatore(Nano):
 
 
 class Guardia(Nano):
-    def __init__(self,AI):
-        super().__init__(AI,100,10,1,1)
+    def __init__(self, AI):
+        super().__init__(AI, 100, 10, 1, 1)
 
-    def esegui(self, target):
-        if isinstance(target,Unita):
+    def esegui(self, target, *args):
+        if isinstance(target, Unita):
             self._attacca(target)
 
     def _level_up(self):
         self.attacco += 5
-        self.vita +=5
+        self.vita += 5
 
 
 class Cerusico(Nano):
-    def __init__(self,AI):
-        super().__init__(AI,100,2,1,5)
+    def __init__(self, AI):
+        super().__init__(AI, 100, 2, 1, 5)
 
-    def esegui(self, target):
+    def esegui(self, target, *args):
         if isinstance(target, Unita) and any(isinstance(x, Erbe) for x in self.inventario):
             time.sleep(2)
             for x in self.inventario:
                 if isinstance(x, Erbe):
                     del x
                     break
-            target.ferite -= min(50 + 5 * (self.livello), target.ferite)
+            target.ferite -= min(50 + 5 * self.livello, target.ferite)
 
     def _level_up(self):
         pass
 
-#TODO tempo di esecuzione
-class Prospettore(Nano):
-    def __init__(self,AI):
-        super().__init__(AI,100,2,1,1)
 
-    def esegui(self, target,*args):
+# TODO tempo di esecuzione
+class Prospettore(Nano):
+    def __init__(self, AI):
+        super().__init__(AI, 100, 2, 1, 1)
+
+    def esegui(self, target, *args):
         if args[0] == "prospezione" and isinstance(target, Muro_base):
             target.carotami()
-        if args[0] == "impianto" and any(isinstance(x,Cristallo) for x in self.inventario) and len(target.inventario) == 1:
+        if args[0] == "impianto" and any(isinstance(x, Cristallo) for x in self.inventario) and len(
+                target.inventario) == 1:
             for x in self.inventario:
                 if isinstance(x, Cristallo):
-                    if randrange(1,10) > min((self.livello),5):
+                    if randrange(1, 10) > min(self.livello, 5):
                         del x
                     break
             target.inventario.append(target.contenuto().copy())
+
+    def _level_up(self):
+        pass
 
 
 '''

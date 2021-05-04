@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import Final
+from typing import final
 
 
 class AI_base(ABC):
     def __init__(self):
         self.attore = None
 
-    @Final
+    @final
     def connetti_attore(self, actor):
         self.attore = actor
 
