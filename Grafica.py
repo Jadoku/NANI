@@ -24,7 +24,7 @@ def setup():
         "muro": (0, 1),
         "acqua": (0, 2),
     }
-    carica_immagine("immagini/sprite.png", sprite_nani)
+    carica_immagine("immagini/spriteFix.png", sprite_nani)
     carica_immagine("immagini/tiles.png", tiles)
 
 
@@ -35,23 +35,22 @@ def update():
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
-        screen.fill((0, 0, 0))
+        screen.fill(pg.Color("light blue"))
         grid(5)
         contatore = 0
         for x, y in icon.items():
             screen.blit(y, (contatore, 0))
             contatore += 65
-        pg.display.update()
+        pg.display.flip()
 
 
 def carica_immagine(immagine: str, dizionario, zoom=False):
-    sprites = pg.image.load(immagine).convert()
+    sprites = pg.image.load(immagine).convert_alpha()
     if zoom:
         sprites = pg.transform.scale2x(sprites)
     for k, v in dizionario.items():
         rettangolo = pg.Rect(v[0] * 64, v[1] * 64, 64, 64)
-        image = pg.Surface(rettangolo.size)
-        image.fill((0, 0, 0, 0))
+        image = pg.Surface(rettangolo.size, flags=pg.SRCALPHA)
         image.blit(sprites, (0, 0), rettangolo)
         icon[k] = image
 
@@ -60,8 +59,8 @@ def grid(lato, dimensione=64, bordo=1):
     for x in range(lato):
         for y in range(lato):
             screen.blit(icon["pavimento"], (x*(dimensione+bordo), y*(dimensione+bordo)))
-'''            pg.draw.rect(screen, (255, 255, 255),
-                         [x * (dimensione + bordo), y * (dimensione + bordo), dimensione, dimensione])'''
+# pg.draw.rect(screen, (255, 255, 255),[x * (dimensione + bordo), y * (dimensione + bordo), dimensione, dimensione])
+
 
 start()
 setup()
