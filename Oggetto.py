@@ -12,6 +12,7 @@ class Oggetto(ABC):
         self.priorita = 0
         self.nome = ""
         self.mappa = None
+        self.sprite = None
 
     def distanza(self, bersaglio):
         """

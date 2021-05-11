@@ -29,6 +29,7 @@ class Nano(Unita, ABC):
 class Minatore(Nano):
     def __init__(self, AI):
         super().__init__(AI, 100, 2, 1, 5)
+        self.sprite = "minatore"
 
     def esegui(self, target, *agrs):
         if isinstance(target, Muro_base):
@@ -42,6 +43,7 @@ class Minatore(Nano):
 class Guardia(Nano):
     def __init__(self, AI):
         super().__init__(AI, 100, 10, 1, 1)
+        self.sprite = "guardia"
 
     def esegui(self, target, *args):
         if isinstance(target, Unita):
@@ -55,6 +57,7 @@ class Guardia(Nano):
 class Cerusico(Nano):
     def __init__(self, AI):
         super().__init__(AI, 100, 2, 1, 5)
+        self.sprite = "cerusico"
 
     def esegui(self, target, *args):
         if isinstance(target, Unita) and any(isinstance(x, Erbe) for x in self.inventario):
@@ -73,6 +76,7 @@ class Cerusico(Nano):
 class Prospettore(Nano):
     def __init__(self, AI):
         super().__init__(AI, 100, 2, 1, 1)
+        self.sprite = "prospettore"
 
     def esegui(self, target, *args):
         if args[0] == "prospezione" and isinstance(target, Muro_base):
