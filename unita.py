@@ -11,9 +11,10 @@ import time
 class Unita(Entita, ABC, Thread):
     def __init__(self, IA):
         super().__init__()
+        self.z = 3
         self.movimento = 1
         self.ia = IA
-        self.ia.connetti_attore(self)
+        # self.ia.connetti_attore(self)
         self.portata = 1
         self.mod_movimento = 1
         self.percorso = []
@@ -21,7 +22,8 @@ class Unita(Entita, ABC, Thread):
 
     def run(self):
         while self.ferite < self.vita:
-            AI_base.comando()
+            pass
+            #TODO AI_base.comando()
 
     def muovi(self, destinazione):
         if not self.percorso or destinazione is not self.destinazione:

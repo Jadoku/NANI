@@ -1,14 +1,14 @@
 from abc import ABC, abstractmethod
-from typing import final
 
 
 class AI_base(ABC):
     def __init__(self):
         self.attore = None
 
-    @final
+    # TODO rimuovere l'if
     def connetti_attore(self, actor):
-        self.attore = actor
+        if not actor:
+            self.attore = actor
 
     @abstractmethod
     def comando(self):

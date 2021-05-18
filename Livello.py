@@ -36,7 +36,10 @@ class Livello:
         :return: 0 se bloccante, altrimenti modificatore di movimento.
         """
         k = 0
-        for i in self.get_coord(x, y):
+        lista = self.get_coord(x, y)
+        if not lista:
+            return -1
+        for i in lista:
             if i.mod_movimento == 0:
                 return 0
             else:
@@ -60,6 +63,7 @@ class Livello:
             if add:
                 self.lista_oggetti.append(oggetto)
                 oggetto.mappa = self
+                self.lista_oggetti.sort(key=lambda x: x.z)
             return peso
         else:
             print("non puoi aggiungere/muovere un oggetto in una casella occupata")
@@ -73,7 +77,7 @@ class Livello:
         return oggetto
 
     def check_bounds(self, x, y):
-        return 0 <= x < self.lato and 0 <= y < self.lato
+        return (0 <= x < self.lato) and (0 <= y < self.lato)
 
 
 class Forziere(Oggetto):

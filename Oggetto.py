@@ -8,6 +8,7 @@ class Oggetto(ABC):
     def __init__(self):
         self.x = -1
         self.y = -1
+        self.z = 0
         self.mod_movimento = 0
         self.priorita = 0
         self.nome = ""

@@ -4,9 +4,10 @@ from Entita import *
 from Risorsa import Sassi
 
 
-class Muro(ABC, Entita):
-    def __init__(self):
+class Muro(Entita, ABC):
+    def __init__(self, sprite:str):
         super().__init__()
+        self.sprite = sprite
 
     def get_damage(self, danno, attaccante=None):
         super().get_damage(danno)
@@ -16,7 +17,7 @@ class Muro(ABC, Entita):
 
 class Muro_base(Muro):
     def __init__(self):
-        super().__init__()
+        super().__init__("muro")
         self.controllato: bool = False
         self.vita = randrange(10, 20)
         self.nome = "Roccia"
@@ -37,6 +38,6 @@ class Muro_base(Muro):
 
 class Muro_ossidiana(Muro):
     def __init__(self):
-        super().__init__()
+        super().__init__("ossidiana")
         self.vita = -1
         self.nome = "Ossidiana"

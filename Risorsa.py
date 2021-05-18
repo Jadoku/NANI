@@ -1,10 +1,11 @@
 from Oggetto import *
 
 
-class Risorsa(ABC, Oggetto):
+class Risorsa(Oggetto, ABC):
     def __init__(self):
         super().__init__()
         self.mod_movimento = 0.2
+        self.z = 1
 
     def get_name(self):
         return self.__class__.__name__

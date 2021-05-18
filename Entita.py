@@ -5,6 +5,7 @@ from Oggetto import *
 class Entita(Oggetto, ABC):
     def __init__(self):
         super().__init__()
+        self.z = 2
         self.vita = 10
         self.ferite = 0
         self.attacco = 0
