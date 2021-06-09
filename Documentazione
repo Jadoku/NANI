@@ -1,0 +1,40 @@
+### Struttura classi ###
+
+main
+Grafica
+AI_base
+Miniera
+Livello
+
+Oggetto
+    ╠ Pavimento
+    ║   ╠ Pietra
+    ║   ╠ Acqua
+    ║   ╚ Lava
+    ╠ Risorsa
+    ║   ╠ Sassi
+    ║   ╠ Ferro
+    ║   ╠ Zolfo
+    ║   ╠ Cristallo
+    ║   ╚ Erbe
+    ╚ Entità
+        ╠ Forziere
+        ╠ Muro
+        ║   ╠ Muro_base
+        ║   ╚ Muro_ossidiana
+        ╚ Unità
+            ╠ Mostro
+            ╚ Nano
+                ╠ Minatore
+                ╠ Guardia
+                ╠ Cerusico
+                ╚ Prospettore
+
+#### Fasi di Funzionamento ###
+    * Main genera la miniera
+    * La miniera genera i livelli con il contenuto di pietra all'interno
+    * Si passano le AI ai nani
+    * Si inseriscono i nani all'interno del primo livello e gli si assegna
+      il riferimento alla miniera
+    * Si inizia a renderizzare con grafica
+    * Le ai dicono ai rispettivi nani di muoversi all'interno della mappa
