@@ -14,6 +14,7 @@ class Oggetto(ABC):
         self.nome = ""
         self.mappa = None
         self.sprite = None
+        self.visibile = False
 
     def distanza(self, bersaglio):
         """
@@ -34,3 +35,6 @@ class Oggetto(ABC):
             y = i[1]
             path_leng += liv[x][y]
         return path_leng, path
+
+    def rivela(self):
+        self.visibile = True

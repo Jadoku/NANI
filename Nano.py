@@ -77,6 +77,7 @@ class Prospettore(Nano):
     def esegui(self, target, *args):
         if args[0] == "prospezione" and isinstance(target, Muro_base):
             target.carotami()
+            time.sleep(1)
         if args[0] == "impianto" and any(isinstance(x, Cristallo) for x in self.inventario) and len(
                 target.inventario) == 1:
             for x in self.inventario:
@@ -85,6 +86,7 @@ class Prospettore(Nano):
                         del x
                     break
             target.inventario.append(target.contenuto().copy())
+            time.sleep(1)
 
     def _level_up(self):
         pass

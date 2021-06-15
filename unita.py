@@ -53,7 +53,7 @@ class Unita(Entita, ABC, Thread):
         self.percorso = []
         self.lunghezza_percorso = 0
         self.destinazione = None
-        self.status = Status.IDLE  # Il segnale è cosa sta facendo l'unità
+        self.status = Status.INATTIVO  # Il segnale è cosa sta facendo l'unità
         self.status_phase: Phase = Phase.ACTIVE
         # La fase del segnale è il suo svolgimento Start, acting, finish
         # Questo per avere una graduatoria sullo svolgimento dell'operazione
@@ -133,7 +133,6 @@ class Unita(Entita, ABC, Thread):
         self._set_status(Status.AZIONE, Phase.START)
         if self.in_range(target):
             self.esegui(target)
-            time.sleep(1)
             self._set_status(Status.AZIONE, Phase.FINISH)
         else:
             self._set_status(Status.AZIONE, Error.BERSAGLIO_AZIONE_FUORI_PORTATA)
