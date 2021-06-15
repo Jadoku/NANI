@@ -70,7 +70,6 @@ class Cerusico(Nano):
         pass
 
 
-# TODO tempo di esecuzione
 class Prospettore(Nano):
     def __init__(self, AI):
         super().__init__(AI, "prospettore", 100, 2, 1, 1)
