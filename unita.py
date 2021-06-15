@@ -66,6 +66,7 @@ class Unita(Entita, ABC, Thread):
     def _set_status(self, new_status: Status = None, new_phase: Phase = None):
         """
         Imposta il nuovo status e notifica alla ai il combiamento
+
         :param new_status: il nuovo segnale
         :param new_phase: la nuova fase
         """
@@ -104,6 +105,7 @@ class Unita(Entita, ABC, Thread):
     def raccogli(self, target, da_mappa=True):
         """
         aggiunge un oggetto all'inventario di una unità
+
         :param target: oggetto da raccogliere
         :param da_mappa: indica se l'oggetto da raccogliere è per terra (True) o no (False)
         :return:
