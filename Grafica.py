@@ -96,6 +96,6 @@ def grid(lato, dimensione, spessore_bordo=0):
 # pg.draw.rect(screen, (255, 255, 255),[x * (dimensione + bordo), y * (dimensione + bordo), dimensione, dimensione])
 
 
-'''start()
+start()
 setup()
-update()'''
+update()

@@ -8,13 +8,37 @@ from threading import Thread
 import time
 
 
-class Segnale(Enum):
-    INCOSCENTE = -1
+class Status(Enum):
+    """
+    Stati ed attività del personaggio
+    """
     INATTIVO = 0
     MOVIMENTO = 1
     ATTACCO = 2
     RACCOLTA = 3
     AZIONE = 4
+
+
+class Phase(Enum):
+    START = 0
+    ACTIVE = 0.5
+    FINISH = 1
+
+
+class Error(Phase):
+    """
+    Errori da passare come phase del comando
+    """
+    # 100-199 Errori movimento
+    NESSUNA_DESTINAZIONE = 100
+    # 200-299 Errori attacco
+    BERSAGLIO_FUORI_RANGE = 200
+    # 300-399 Errori raccolta
+    TENTATA_RACCOLTA_NON_RISORSA = 300
+    INVENTARIO_PIENO = 301
+    RISORSA_FUORI_RANGE = 302
+    # 400-499 Errori azione
+    BERSAGLIO_AZIONE_FUORI_PORTATA = 400
 
 
 class Unita(Entita, ABC, Thread):
@@ -27,9 +51,10 @@ class Unita(Entita, ABC, Thread):
         self.portata = 1
         self.mod_movimento = 1
         self.percorso = []
+        self.lunghezza_percorso = 0
         self.destinazione = None
-        self.status = Segnale.IDLE  # Il segnale è cosa sta facendo l'unità
-        self.status_phase = 0  # La fase del segnale è il suo svolgimento 0 inizio >0 esecuzione 1 fine
+        self.status = Status.IDLE  # Il segnale è cosa sta facendo l'unità
+        self.status_phase: float = 0.0  # La fase del segnale è il suo svolgimento 0 inizio >0 esecuzione 1 fine
         # Questo per avere una graduatoria sullo svolgimento dell'operazione
 
     def run(self):
@@ -37,7 +62,7 @@ class Unita(Entita, ABC, Thread):
             pass
             # TODO AI_base.comando()
 
-    def _set_status(self, new_status: Segnale = None, new_phase: int = -1):
+    def _set_status(self, new_status: Status = None, new_phase: Phase = None):
         """
         Imposta il nuovo status e notifica alla ai il combiamento
         :param new_status: il nuovo segnale
@@ -45,7 +70,7 @@ class Unita(Entita, ABC, Thread):
         """
         if not new_status and new_status != self.status:
             self.status = new_status
-        if new_phase > -1 and new_phase != self.status_phase:
+        if new_phase and new_phase != self.status_phase:
             self.status_phase = new_phase
         self.ia.unit_status_update(self.status, self.status_phase)
 
@@ -53,19 +78,27 @@ class Unita(Entita, ABC, Thread):
         if not nuova_destinazione:
             if self.destinazione != nuova_destinazione:
                 self.percorso = self.distanza(nuova_destinazione)[1]
+                self.lunghezza_percorso = len(self.percorso)
+                self._set_status(Status.MOVIMENTO, 0)
         elif self.percorso:
             coord = self.percorso.pop(0)
             peso = self.mappa.add_move(coord[0], coord[1], self)
             time.sleep(peso / 3)
+            self._set_status(Status.MOVIMENTO, 1 - self.percorso / self.lunghezza_percorso)
+            if self.percorso:
+                self._set_status(Status.MOVIMENTO, 1)
         else:
             print("Comando muovi usato senza destinazione")
+            self._set_status(Status.MOVIMENTO, Error.NESSUNA_DESTINAZIONE)
 
     def _attacca(self, bersaglio):
+        self._set_status(Status.ATTACCO, 0)
         if self.in_range(bersaglio):
             bersaglio.get_damage(self.attacco, self)
             time.sleep(0.5)
+            self._set_status(Status.ATTACCO, 1)
         else:
-            pass
+            self._set_status(Status.ATTACCO, Error.BERSAGLIO_FUORI_RANGE)
 
     def raccogli(self, target, da_mappa=True):
         """
@@ -74,20 +107,33 @@ class Unita(Entita, ABC, Thread):
         :param da_mappa: indica se l'oggetto da raccogliere è per terra (True) o no (False)
         :return:
         """
-        if self.in_range(target) and len(self.inventario) < self.slot_inventario and isinstance(target, Risorsa):
-            self.inventario.append(target)
-            if da_mappa:
-                self.mappa.remove_item(target)
-            time.sleep(0.2)
+        self._set_status(Status.RACCOLTA, 0)
+        if isinstance(target, Risorsa):
+            if self.in_range(target):
+                if len(self.inventario) < self.slot_inventario:
+                    self.inventario.append(target)
+                    if da_mappa:
+                        self.mappa.remove_item(target)
+                    time.sleep(0.2)
+                    self._set_status(Status.RACCOLTA, 1)
+                else:
+                    self._set_status(Status.RACCOLTA, Error.INVENTARIO_PIENO)
+            else:
+                self._set_status(Status.RACCOLTA, Error.RISORSA_FUORI_RANGE)
+        else:
+            self._set_status(Status.RACCOLTA, Error.TENTATA_RACCOLTA_NON_RISORSA)
 
     def in_range(self, bersaglio):
         return len(self.distanza(bersaglio)[1]) <= self.portata
 
     def azione(self, target):
+        self._set_status(Status.AZIONE, 0)
         if self.in_range(target):
             self.esegui(target)
             time.sleep(1)
+            self._set_status(Status.AZIONE, 1)
         else:
+            self._set_status(Status.AZIONE, Error.BERSAGLIO_AZIONE_FUORI_PORTATA)
             pass
 
     @abstractmethod
