@@ -47,14 +47,15 @@ class Unita(Entita, ABC, Thread):
         self.z = 3
         self.movimento = 1
         self.ia: AI_base = IA
-        # self.ia.connetti_attore(self)
+        self.ia.connetti_attore(self)
         self.portata = 1
         self.mod_movimento = 1
         self.percorso = []
         self.lunghezza_percorso = 0
         self.destinazione = None
         self.status = Status.IDLE  # Il segnale è cosa sta facendo l'unità
-        self.status_phase: float = 0.0  # La fase del segnale è il suo svolgimento 0 inizio >0 esecuzione 1 fine
+        self.status_phase: Phase = Phase.ACTIVE
+        # La fase del segnale è il suo svolgimento Start, acting, finish
         # Questo per avere una graduatoria sullo svolgimento dell'operazione
 
     def run(self):
@@ -79,24 +80,24 @@ class Unita(Entita, ABC, Thread):
             if self.destinazione != nuova_destinazione:
                 self.percorso = self.distanza(nuova_destinazione)[1]
                 self.lunghezza_percorso = len(self.percorso)
-                self._set_status(Status.MOVIMENTO, 0)
+                self._set_status(Status.MOVIMENTO, Phase.START)
         elif self.percorso:
             coord = self.percorso.pop(0)
             peso = self.mappa.add_move(coord[0], coord[1], self)
             time.sleep(peso / 3)
-            self._set_status(Status.MOVIMENTO, 1 - self.percorso / self.lunghezza_percorso)
-            if self.percorso:
-                self._set_status(Status.MOVIMENTO, 1)
+            self._set_status(Status.MOVIMENTO, Phase.ACTIVE)
+            if not self.percorso:
+                self._set_status(Status.MOVIMENTO, Phase.FINISH)
         else:
             print("Comando muovi usato senza destinazione")
             self._set_status(Status.MOVIMENTO, Error.NESSUNA_DESTINAZIONE)
 
     def _attacca(self, bersaglio):
-        self._set_status(Status.ATTACCO, 0)
+        self._set_status(Status.ATTACCO, Phase.START)
         if self.in_range(bersaglio):
             bersaglio.get_damage(self.attacco, self)
             time.sleep(0.5)
-            self._set_status(Status.ATTACCO, 1)
+            self._set_status(Status.ATTACCO, Phase.FINISH)
         else:
             self._set_status(Status.ATTACCO, Error.BERSAGLIO_FUORI_RANGE)
 
@@ -107,7 +108,7 @@ class Unita(Entita, ABC, Thread):
         :param da_mappa: indica se l'oggetto da raccogliere è per terra (True) o no (False)
         :return:
         """
-        self._set_status(Status.RACCOLTA, 0)
+        self._set_status(Status.RACCOLTA, Phase.START)
         if isinstance(target, Risorsa):
             if self.in_range(target):
                 if len(self.inventario) < self.slot_inventario:
@@ -115,7 +116,7 @@ class Unita(Entita, ABC, Thread):
                     if da_mappa:
                         self.mappa.remove_item(target)
                     time.sleep(0.2)
-                    self._set_status(Status.RACCOLTA, 1)
+                    self._set_status(Status.RACCOLTA, Phase.FINISH)
                 else:
                     self._set_status(Status.RACCOLTA, Error.INVENTARIO_PIENO)
             else:
@@ -127,11 +128,11 @@ class Unita(Entita, ABC, Thread):
         return len(self.distanza(bersaglio)[1]) <= self.portata
 
     def azione(self, target):
-        self._set_status(Status.AZIONE, 0)
+        self._set_status(Status.AZIONE, Phase.START)
         if self.in_range(target):
             self.esegui(target)
             time.sleep(1)
-            self._set_status(Status.AZIONE, 1)
+            self._set_status(Status.AZIONE, Phase.FINISH)
         else:
             self._set_status(Status.AZIONE, Error.BERSAGLIO_AZIONE_FUORI_PORTATA)
             pass

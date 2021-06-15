@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from unita import *
+from unita import Unita, Status, Phase, Error
 
 
 class AI_base(ABC):
