@@ -36,5 +36,7 @@ Oggetto
     * Si passano le AI ai nani
     * Si inseriscono i nani all'interno del primo livello e gli si assegna
       il riferimento alla miniera
+    * Si inserisce il forziere al centro del livello
     * Si inizia a renderizzare con grafica
     * Le ai dicono ai rispettivi nani di muoversi all'interno della mappa
+    * Il sistema di segnali dice alla ai che sta succedendo e questa risponde di conseguenza
