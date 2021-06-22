@@ -1,7 +1,7 @@
 from Oggetto import *
 
 
-class Pavimento(ABC, Oggetto):
+class Pavimento(Oggetto, ABC):
     def __init__(self):
         super().__init__()
 
@@ -11,14 +11,18 @@ class Pavimento(ABC, Oggetto):
 
 class Pietra(Pavimento):
     def __init__(self):
+        super(Pietra, self).__init__()
         self.nome = self.get_name()
         self.mod_movimento = 1
+        self.sprite = "pavimento"
 
 
 class Acqua(Pavimento):
     def __init__(self):
+        super(Acqua, self).__init__()
         self.nome = self.get_name()
         self.mod_movimento = 2
+        self.sprite = "acqua"
 
 
 class Lava(Pavimento):

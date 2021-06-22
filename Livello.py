@@ -1,3 +1,6 @@
+from random import random
+from typing import Tuple
+
 from Entita import Entita
 from Oggetto import Oggetto
 from Risorsa import Risorsa
@@ -82,9 +85,118 @@ class Livello:
     def check_bounds(self, x, y):
         return (0 <= x < self.lato) and (0 <= y < self.lato)
 
-    def builder(self,):
+    def builder(self, builder_function):
+        pavimento = builder_function()
+        total_size = len(pavimento)*len(pavimento[0])
+        current = 0
+        from Pavimento import Pietra, Acqua
+        for y in range(len(pavimento[0])):
+            for x in range(len(pavimento)):
+                if pavimento[x][y] > 0:
+                    self.add_move(x, y, Pietra(), add=True)
+                else:
+                    pass
+                    #self.add_move(x, y, Acqua(), add=True)
+                current += 1
+                print("\rCostruzione pavimento...", round((current/total_size)*100), end="")
+        print("")
+        muri = builder_function()
+        total_size = len(muri) * len(muri[0])
+        current = 0
+        from Muro import Muro_base, Muro_ossidiana
+        for y in range(len(muri[0])):
+            for x in range(len(muri)):
+                if muri[x][y] > 0:
+                    self.add_move(x, y, Muro_base(), add=True)
+                else:
+                    pass
+                    #self.add_move(x, y, Muro_ossidiana(), add=True)
+                current += 1
+                print("\rCostruzione muri...", round((current / total_size)*100), end="")
+
+        print("\nCostruzione risorse... da finire")
+        # TODO finire di costruire le risorse
+
+    def perlin_builder(self, size: Tuple[int, int], octave=10, seed=1, threshold=-2):
         from perlin_noise import PerlinNoise
-        noise = PerlinNoise(octaves=10, seed=1)
+        noise = PerlinNoise(octaves=octave, seed=seed)
+        xpix, ypix = size
+        pic = [[noise([i / xpix, j / ypix]) for j in range(xpix)] for i in range(ypix)]
+
+        if threshold != -2:
+            for cy in range(xpix):
+                for cx in range(ypix):
+                    pic[cx][cx] = int(pic[cx][cy] >= threshold)
+        return pic
+
+    def life_builder(self, size, cicles=5, life=(2, 3), death=(1, 4, 5, 6, 7, 8), born=(3,), count=1, mask=0,
+                     only_ortogonal=False, render_alive="██", render_dead="░░"):
+        # Creo la matrice
+        matrix = []
+        result = []
+        for r in range(size[0]):
+            row = []
+            rrow = []
+            for c in range(size[1]):
+                row.append(round(random()))
+                rrow.append(0)
+            matrix.append(row)
+            result.append(rrow)
+
+        # creo la funzione che mi conta i vicini di ogni cella
+        def vicini(x, y):
+            coords = [
+                (-1, -1), (0, -1), (1, -1),
+                (-1, 0),           (1, 0),
+                (-1, 1), (0, 1),   (1, 1)
+            ]
+            if only_ortogonal:
+                coords = [
+                             (0, -1),
+                    (-1, 0),         (1, 0),
+                              (0, 1)
+                ]
+            res = 0
+            lista_vicini = []
+            for cr in coords:
+                nx, ny = x + cr[0], y + cr[1]
+                if 0 <= nx < size[0] and 0 <= ny < size[1]:
+                    # se le coordinate dei vicini sono nei bordi
+                    if matrix[nx][ny] == 1:
+                        # se uguali a 1 (vive) conta il vicino
+                        res += 1
+                        lista_vicini.append(matrix[nx][ny])
+            return res, lista_vicini
+
+        # Si fanno i cicli e si guarda come evolvono
+        for cile in range(cicles):
+            # creo una matrice vuota che sarà la mia nuova matrix modificata
+            support = []
+            # Esploro ogni casella della matrice
+            for cy in range(size[1]):
+                row = []
+                for cx in range(size[0]):
+                    u = matrix[cx][cy]
+                    v, l = vicini(cx, cy)
+                    nu = u
+                    if u == 1:
+                        if v in life:
+                            result[cx][cy] = 1 if count == 1 else result[cx][cy]
+                            nu = 1
+                        elif v in death:
+                            result[cx][cy] = 1 if count == 0 else result[cx][cy]
+                            nu = 0
+                    else:
+                        if v in born:
+                            result[cx][cy] = 1 if count == -1 else result[cx][cy]
+                            nu = 1
+                    result[cx][cy] = 1 if 0 < mask == v else result[cx][cy]
+                    result[cx][cy] = 0 if 0 > mask and abs(mask) == v else result[cx][cy]
+                    row.append(nu)
+                support.append(row)
+            matrix = support
+        return matrix
+
 
 class Forziere(Oggetto):
     def __init__(self):

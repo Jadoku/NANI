@@ -5,7 +5,7 @@ from Risorsa import Sassi
 
 
 class Muro(Entita, ABC):
-    def __init__(self, sprite:str):
+    def __init__(self, sprite: str):
         super().__init__()
         self.sprite = sprite
 

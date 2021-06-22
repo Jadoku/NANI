@@ -30,7 +30,7 @@ def setup():
         "prospettore": (0, 2)
     }
     tiles = {
-        "pavimento": (2, 1),
+        "pavimento": (3, 1),
         "muro": (0, 1),
         "acqua": (0, 2),
     }
@@ -93,9 +93,3 @@ def grid(lato, dimensione, spessore_bordo=0):
     for x in range(lato):
         for y in range(lato):
             main_screen.blit(icon["pavimento"], (x * (dimensione + spessore_bordo), y * (dimensione + spessore_bordo)))
-# pg.draw.rect(screen, (255, 255, 255),[x * (dimensione + bordo), y * (dimensione + bordo), dimensione, dimensione])
-
-
-start()
-setup()
-update()
