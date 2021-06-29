@@ -8,7 +8,7 @@ from Oggetto import Oggetto
 mappa: Livello
 latocasella = 64
 bordo = 2
-lato_miniera = 31
+lato_miniera = 33
 dim_miniera = (latocasella+bordo)*lato_miniera-bordo
 screen_size = larghezza, altezza = dim_miniera//2, dim_miniera//2
 screen: pg.Surface
@@ -33,10 +33,17 @@ def setup():
         "pavimento": (3, 1),
         "muro": (0, 1),
         "acqua": (0, 2),
-        "lava": ()
+        "lava": (3, 2)
+    }
+    icone_risorse = {
+        "ferro": (1, 1),
+        "zolfo": (0, 1),
+        "cristallo": (0, 0),
+        "erbe": (1, 0)
     }
     carica_immagine("immagini/spriteFix.png", sprite_nani)
     carica_immagine("immagini/tiles.png", tiles)
+    carica_immagine("immagini/gemme2.png", icone_risorse)
 
 
 def update():

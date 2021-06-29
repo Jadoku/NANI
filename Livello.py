@@ -1,4 +1,4 @@
-from random import random
+from random import random, randrange
 from typing import Tuple
 
 from Entita import Entita
@@ -7,7 +7,7 @@ from Risorsa import Risorsa
 
 
 class Livello:
-    def __init__(self, lato: int = 31):
+    def __init__(self, lato: int = 33):
         # self.matrix=[[[0,0,0]]*lato for _ in range(lato)]
         self.lista_oggetti = []
         self.lato = lato
@@ -85,9 +85,9 @@ class Livello:
     def check_bounds(self, x, y):
         return (0 <= x < self.lato) and (0 <= y < self.lato)
 
-    def builder(self, builder_function):
-        pavimento = builder_function()
-        total_size = len(pavimento)*len(pavimento[0])
+    def builder(self, size: Tuple[int, int]):
+        pavimento = self.perlin_builder(size, octave=2)
+        total_size = size[0]*size[1]
         current = 0
         from Pavimento import Pietra, Acqua
         for y in range(len(pavimento[0])):
@@ -95,30 +95,34 @@ class Livello:
                 if pavimento[x][y] > 0:
                     self.add_move(x, y, Pietra(), add=True)
                 else:
-                    pass
-                    #self.add_move(x, y, Acqua(), add=True)
+                    self.add_move(x, y, Acqua(), add=True)
                 current += 1
-                print("\rCostruzione pavimento...", round((current/total_size)*100), end="")
+                print("\rCostruzione pavimento...", round((current / total_size) * 100), end="")
         print("")
-        muri = builder_function()
-        total_size = len(muri) * len(muri[0])
+        muri = self.perlin_builder(size, threshold=-0.15)
         current = 0
-        from Muro import Muro_base, Muro_ossidiana
+        from Muro import Muro_base, Muro_ossidiana  # TODO muro di ossidiana
         for y in range(len(muri[0])):
             for x in range(len(muri)):
                 if muri[x][y] > 0:
                     self.add_move(x, y, Muro_base(), add=True)
-                else:
-                    pass
-                    # self.add_move(x, y, Muro_ossidiana(), add=True)
                 current += 1
-                print("\rCostruzione muri...", round((current / total_size)*100), end="")
+                print("\rCostruzione muri...", round((current / total_size) * 100), end="")
+        print("")
+        risorse = self.life_builder(size)
+        current = 0
+        from Risorsa import Ferro, Zolfo, Cristallo, Erbe
+        for y in range(len(risorse[0])):
+            for x in range(len(risorse)):
+                if risorse[x][y] > 0:
+                    resources_list = [Ferro(), Zolfo(), Cristallo(), Erbe()]
+                    self.add_move(x, y, resources_list[randrange(0, len(resources_list) - 1)], add=True)
+                current += 1
+                print("\rDistribuzione risorse...", round((current / total_size) * 100), end="")
 
-        print("\nCostruzione risorse... da finire")
-        # TODO finire di costruire le risorse
-
-    def perlin_builder(self, size: Tuple[int, int], octave=10, seed=1, threshold=-2):
+    def perlin_builder(self, size: Tuple[int, int], octave=10, threshold=-2.0):
         from perlin_noise import PerlinNoise
+        seed = randrange(1, 10000000)
         noise = PerlinNoise(octaves=octave, seed=seed)
         xpix, ypix = size
         pic = [[noise([i / xpix, j / ypix]) for j in range(xpix)] for i in range(ypix)]
@@ -126,11 +130,12 @@ class Livello:
         if threshold != -2:
             for cy in range(xpix):
                 for cx in range(ypix):
-                    pic[cx][cx] = int(pic[cx][cy] >= threshold)
+                    pic[cx][cy] = int(pic[cx][cy] >= threshold)
+                    print(pic[cx][cy])
         return pic
 
     def life_builder(self, size, cicles=5, life=(2, 3), death=(1, 4, 5, 6, 7, 8), born=(3,), count=1, mask=0,
-                     only_ortogonal=False, render_alive="██", render_dead="░░"):
+                     only_ortogonal=False):
         # Creo la matrice
         matrix = []
         result = []
@@ -147,14 +152,14 @@ class Livello:
         def vicini(x, y):
             coords = [
                 (-1, -1), (0, -1), (1, -1),
-                (-1, 0),           (1, 0),
-                (-1, 1), (0, 1),   (1, 1)
+                (-1, 0), (1, 0),
+                (-1, 1), (0, 1), (1, 1)
             ]
             if only_ortogonal:
                 coords = [
-                             (0, -1),
-                    (-1, 0),         (1, 0),
-                              (0, 1)
+                    (0, -1),
+                    (-1, 0), (1, 0),
+                    (0, 1)
                 ]
             res = 0
             lista_vicini = []

@@ -13,24 +13,33 @@ class Risorsa(Oggetto, ABC):
 
 class Sassi(Risorsa):
     def __init__(self):
+        super().__init__()
         self.nome = self.get_name()
 
 
 class Ferro(Risorsa):
     def __init__(self):
+        super().__init__()
         self.nome = self.get_name()
+        self.sprite = "ferro"
 
 
 class Zolfo(Risorsa):
     def __init__(self):
+        super().__init__()
         self.nome = self.get_name()
+        self.sprite = "zolfo"
 
 
 class Cristallo(Risorsa):
     def __init__(self):
+        super().__init__()
         self.nome = self.get_name()
+        self.sprite = "cristallo"
 
 
 class Erbe(Risorsa):
     def __init__(self):
+        super().__init__()
         self.nome = self.get_name()
+        self.sprite = "erbe"
