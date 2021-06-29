@@ -7,7 +7,7 @@ from Risorsa import Risorsa
 
 
 class Livello:
-    def __init__(self, lato: int = 33):
+    def __init__(self, lato: int = 3):
         # self.matrix=[[[0,0,0]]*lato for _ in range(lato)]
         self.lista_oggetti = []
         self.lato = lato
@@ -85,7 +85,9 @@ class Livello:
     def check_bounds(self, x, y):
         return (0 <= x < self.lato) and (0 <= y < self.lato)
 
-    def builder(self, size: Tuple[int, int]):
+    def builder(self):
+        self.lista_oggetti = []
+        size = (self.lato, self.lato)
         pavimento = self.perlin_builder(size, octave=2)
         total_size = size[0]*size[1]
         current = 0
@@ -131,7 +133,6 @@ class Livello:
             for cy in range(xpix):
                 for cx in range(ypix):
                     pic[cx][cy] = int(pic[cx][cy] >= threshold)
-                    print(pic[cx][cy])
         return pic
 
     def life_builder(self, size, cicles=5, life=(2, 3), death=(1, 4, 5, 6, 7, 8), born=(3,), count=1, mask=0,
