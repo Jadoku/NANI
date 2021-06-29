@@ -27,5 +27,7 @@ class Acqua(Pavimento):
 
 class Lava(Pavimento):
     def __init__(self):
+        super(Lava, self).__init__()
         self.nome = self.get_name()
         self.mod_movimento = 0
+        self.sprite = "lava"

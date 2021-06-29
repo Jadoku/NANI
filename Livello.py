@@ -110,7 +110,7 @@ class Livello:
                     self.add_move(x, y, Muro_base(), add=True)
                 else:
                     pass
-                    #self.add_move(x, y, Muro_ossidiana(), add=True)
+                    # self.add_move(x, y, Muro_ossidiana(), add=True)
                 current += 1
                 print("\rCostruzione muri...", round((current / total_size)*100), end="")
 

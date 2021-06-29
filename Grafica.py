@@ -33,6 +33,7 @@ def setup():
         "pavimento": (3, 1),
         "muro": (0, 1),
         "acqua": (0, 2),
+        "lava": ()
     }
     carica_immagine("immagini/spriteFix.png", sprite_nani)
     carica_immagine("immagini/tiles.png", tiles)

@@ -21,5 +21,5 @@ class Miniera:
         """
         lev = Livello()
         # lev.builder(lambda: lev.perlin_builder((31, 31), threshold=0))
-        lev.builder(lambda: lev.life_builder((31, 31)))
+        lev.builder(lambda: lev.perlin_builder((31, 31)))
         return lev
