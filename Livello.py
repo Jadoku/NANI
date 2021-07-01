@@ -90,6 +90,14 @@ class Livello:
     def check_bounds(self, x, y):
         return (0 <= x < self.lato) and (0 <= y < self.lato)
 
+    def load_percent(self, message, count=1, total=2) -> int:
+        count += 1
+        cur = round((count / total)*100)
+        print("\r"+message, str(cur)+"%", end="")
+        if count >= total:
+            print("\tOK!")
+        return count
+
     def builder(self, resource_array=None):
         if resource_array is None:
             resource_array = [50, 50, 50, 50]
@@ -104,9 +112,8 @@ class Livello:
                     self.add_move(x, y, Pietra(), add=True)
                 else:
                     self.add_move(x, y, Acqua(), add=True)
-                current += 1
-                print("\rCostruzione pavimento...", round((current / total_size) * 100), end="")
-        print("")
+                current = self.load_percent("Costruzione pavimento...", current, total_size)
+
         muri = self.perlin_builder(size, threshold=-0.15)
         current = 0
         from Muro import Muro, Muro_base, Muro_ossidiana  # TODO muro di ossidiana
@@ -114,11 +121,12 @@ class Livello:
             for x in range(len(muri)):
                 if muri[x][y] > 0:
                     self.add_move(x, y, Muro_base(), add=True)
-                current += 1
-                print("\rCostruzione muri...", round((current / total_size) * 100), end="")
-        print("")
+                current = self.load_percent("Costruzione muri...", current, total_size)
+
         # Scorro la matrice in blocchi da 5x5
         saved_points = []
+        current = 0
+        total_size = (size[0]//5) * (size[1]//5)
         for y in range(0, size[1], 5):
             for x in range(0, size[0], 5):
                 # Scorre i punti scelti dall'origine x,y fino a x+w e y+h
@@ -137,11 +145,14 @@ class Livello:
                     wall_list.sort(key=lambda z: math.sqrt((source[0] - z[0]) ** 2 + (source[1] - z[1]) ** 2))
                     # li aggiunge ai saved points
                     saved_points.append(wall_list)
+                current = self.load_percent("Calcolo distribuzione risorse...", current, total_size)
 
         from Risorsa import Ferro, Zolfo, Cristallo, Erbe
         resource_classes = [Ferro, Zolfo, Cristallo, Erbe]
         resource_count = resource_array
         # Inizio a scorrere la lista generata dal precedente for
+        current = 0
+        total_size = sum(resource_array)
         i = 0
         stop = 0
         while saved_points and resource_count:  # Esce quando una delle due liste è vuota
@@ -162,6 +173,7 @@ class Livello:
                     break
             # manda avanti il ciclo
             i = (i + 1) % len(saved_points)
+            current = self.load_percent("Distribuzione risorse...", current, total_size)
             # Se il ciclo fa più cicli del numero di caselle lancia un errore che blocca il programma
             stop += 1
             assert stop < (size[0] * size[1])
@@ -169,6 +181,8 @@ class Livello:
         # creo lo spazio vuoto di inizio
         center = math.ceil(size[0] / 2)
         forziere = Forziere()
+        current = 0
+
         for y in range(center - 2, center + 3, 1):
             for x in range(center - 2, center + 3, 1):
                 w = self.get_coord(x, y, False, Muro)
@@ -176,8 +190,10 @@ class Livello:
                     if w[0].inventario:
                         forziere.drop_item(w[0].inventario[0], w[0])
                     self.remove_item(w[0], destroy=True)
+                    current = self.load_percent("Costruzione punto partenza...", current, total_size)
         # creo il forziere
         self.add_move(center, center, forziere, add=True)
+        self.load_percent("Piazzamento forziere...")
 
     def perlin_builder(self, size: Tuple[int, int], octave=10, threshold=-2.0):
         from perlin_noise import PerlinNoise
