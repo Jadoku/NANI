@@ -41,9 +41,13 @@ def setup():
         "cristallo": (0, 0),
         "erbe": (1, 0)
     }
+    forzieri = {
+        "forziere": (0, 2)
+    }
     carica_immagine("immagini/spriteFix.png", sprite_nani)
     carica_immagine("immagini/tiles.png", tiles)
     carica_immagine("immagini/gemme2.png", icone_risorse)
+    carica_immagine("immagini/treasure_chests_32x32.png", forzieri)
 
 
 def update():
