@@ -168,13 +168,16 @@ class Livello:
 
         # creo lo spazio vuoto di inizio
         center = math.ceil(size[0] / 2)
+        forziere = Forziere()
         for y in range(center - 2, center + 3, 1):
             for x in range(center - 2, center + 3, 1):
                 w = self.get_coord(x, y, False, Muro)
                 if w:
+                    if w[0].inventario:
+                        forziere.drop_item(w[0].inventario[0], w[0])
                     self.remove_item(w[0], destroy=True)
         # creo il forziere
-        self.add_move(center, center, Forziere(),add=True)
+        self.add_move(center, center, forziere, add=True)
 
     def perlin_builder(self, size: Tuple[int, int], octave=10, threshold=-2.0):
         from perlin_noise import PerlinNoise
@@ -271,8 +274,9 @@ class Forziere(Oggetto):
             "Sassi": 0
         }
 
-    def drop_item(self, item: Risorsa, donatore):
-        donatore.inventario.remove(item)
+    def drop_item(self, item: Risorsa, donatore=None):
+        if donatore:
+            donatore.inventario.remove(item)
         self.lista_risorse[item.nome] += 1
         del item
 
