@@ -33,6 +33,7 @@ class Player:
             "prospettore": (0, 2)
         }
         tiles = {
+            "vuoto": (0, 0),
             "pavimento": (3, 1),
             "muro": (0, 1),
             "acqua": (0, 2),
@@ -103,5 +104,5 @@ class Player:
     def grid(self, lato, dimensione, spessore_bordo=0):
         for x in range(lato):
             for y in range(lato):
-                self.main_screen.blit(self.icon["pavimento"],
+                self.main_screen.blit(self.icon["vuoto"],
                                       (x * (dimensione + spessore_bordo), y * (dimensione + spessore_bordo)))
