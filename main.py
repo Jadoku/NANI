@@ -1,12 +1,14 @@
 # bonamerde 2 la vendetta
-import Grafica as gr
+from Grafica import Player
 from Miniera import Miniera
 
 miniera = Miniera(1)
 miniera.genera_miniera()
 
 L = miniera.livelli[0]
-gr.mappa = L
+gr = Player()
+gr.set_map(L)
+
 #
 # nano = Guardia(None)
 # L.add_move(3,12,nano,True)
