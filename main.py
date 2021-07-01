@@ -7,6 +7,7 @@ miniera.genera_miniera()
 
 L = miniera.livelli[0]
 gr = Player()
+gr.mostra_tutto = True
 gr.set_map(L)
 gr.start()
 gr.setup()

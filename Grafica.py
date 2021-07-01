@@ -10,7 +10,7 @@ class Player:
     def __init__(self):
         self.latocasella = 64
         self.bordo = 2
-
+        self.mostra_tutto = False
         self.icon = {}
         self.running = True
 
@@ -81,7 +81,8 @@ class Player:
 
             oggetti: List[Oggetto] = self.mappa.lista_oggetti.copy()
             for x in oggetti:
-                self.main_screen.blit(self.icon[x.sprite],
+                if x.visibile or self.mostra_tutto:
+                    self.main_screen.blit(self.icon[x.sprite],
                                       (x.x * (self.latocasella + self.bordo), x.y * (self.latocasella + self.bordo)))
 
             # pg.transform.scale(main_screen, (main_screen.get_width()//2, main_screen.get_height()//2), main_screen)
