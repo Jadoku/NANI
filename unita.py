@@ -41,7 +41,8 @@ class Error(Phase):
     RISORSA_FUORI_RANGE = 302
     # 400-499 Errori forziere
     FORZIERE_FUORI_PORTATA = 400
-    RISORSA_ANCANTE = 401
+    RISORSA_MANCANTE = 401
+    RISORSA_DA_DEPOSITARE_NON_POSSEDUTA = 402
     # 500-599 Errori azione
     BERSAGLIO_AZIONE_FUORI_PORTATA = 500
 
@@ -148,7 +149,7 @@ class Unita(Entita, ABC, Thread):
             self._set_status(Status.AZIONE, Error.BERSAGLIO_AZIONE_FUORI_PORTATA)
             pass
 
-    def usa_forziere(self, preleva: pc.__nomi_risorse =None, deposita: Risorsa = None):
+    def usa_forziere(self, preleva: pc.__nomi_risorse = None, deposita: Risorsa = None):
         self._set_status(Status.USO_FORZIERE, Phase.START)
         if not self.in_range(self.forziere):
             self._set_status(Status.USO_FORZIERE, Error.FORZIERE_FUORI_PORTATA)
@@ -160,8 +161,11 @@ class Unita(Entita, ABC, Thread):
             else:
                 self._set_status(Status.USO_FORZIERE, Error.RISORSA_MANCANTE)
         elif deposita:
-            self.forziere.drop_item(deposita)
-            pass
+            if deposita in self.inventario:
+                self.forziere.drop_item(deposita)
+                self.inventario.remove(deposita)
+            else:
+                self._set_status(Status.USO_FORZIERE, Error.RISORSA_DA_DEPOSITARE_NON_POSSEDUTA)
 
     @abstractmethod
     def esegui(self, target, *args):
