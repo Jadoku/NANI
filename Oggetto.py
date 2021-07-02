@@ -16,6 +16,9 @@ class Oggetto(ABC):
         self.sprite = None
         self.visibile = False
 
+    def on_map_enter(self, mappa):
+        self.mappa = mappa
+
     def distanza(self, bersaglio):
         """
         calcolo del percorso e della distanza pesata

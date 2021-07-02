@@ -17,7 +17,8 @@ class Status(Enum):
     MOVIMENTO = 1
     ATTACCO = 2
     RACCOLTA = 3
-    AZIONE = 4
+    USO_FORZIERE = 4
+    AZIONE = 5
 
 
 class Phase(Enum):
@@ -38,8 +39,11 @@ class Error(Phase):
     TENTATA_RACCOLTA_NON_RISORSA = 300
     INVENTARIO_PIENO = 301
     RISORSA_FUORI_RANGE = 302
-    # 400-499 Errori azione
-    BERSAGLIO_AZIONE_FUORI_PORTATA = 400
+    # 400-499 Errori forziere
+    FORZIERE_FUORI_PORTATA = 400
+    RISORSA_ANCANTE = 401
+    # 500-599 Errori azione
+    BERSAGLIO_AZIONE_FUORI_PORTATA = 500
 
 
 class Unita(Entita, ABC, Thread):
@@ -54,10 +58,15 @@ class Unita(Entita, ABC, Thread):
         self.percorso = []
         self.lunghezza_percorso = 0
         self.destinazione = None
+        self.forziere = None
         self.status = Status.INATTIVO  # Il segnale è cosa sta facendo l'unità
         self.status_phase: Phase = Phase.ACTIVE
         # La fase del segnale è il suo svolgimento Start, acting, finish
         # Questo per avere una graduatoria sullo svolgimento dell'operazione
+
+    def on_map_enter(self, mappa):
+        super().on_map_enter(mappa)
+        self.forziere = mappa.forziere
 
     def run(self):
         while self.ferite < self.vita:
@@ -137,6 +146,21 @@ class Unita(Entita, ABC, Thread):
             self._set_status(Status.AZIONE, Phase.FINISH)
         else:
             self._set_status(Status.AZIONE, Error.BERSAGLIO_AZIONE_FUORI_PORTATA)
+            pass
+
+    def usa_forziere(self, preleva: pc.__nomi_risorse =None, deposita: Risorsa = None):
+        self._set_status(Status.USO_FORZIERE, Phase.START)
+        if not self.in_range(self.forziere):
+            self._set_status(Status.USO_FORZIERE, Error.FORZIERE_FUORI_PORTATA)
+            return
+        if preleva:
+            if self.forziere.has_item(preleva.value):
+                self.forziere.pick_item(preleva.value, self)
+                self._set_status(Status.USO_FORZIERE, Phase.FINISH)
+            else:
+                self._set_status(Status.USO_FORZIERE, Error.RISORSA_MANCANTE)
+        elif deposita:
+            self.forziere.drop_item(deposita)
             pass
 
     @abstractmethod

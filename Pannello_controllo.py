@@ -4,6 +4,8 @@ gioco, questo file può essere salvato e caricato e va caricato prima di tutti
 """
 
 # --- Grafica --- #
+from enum import Enum
+
 mostra_tutto = False
 lato_casella = 64
 bordo_griglia = 2
@@ -29,6 +31,15 @@ z_pavimento = 0
 z_risorse = 1
 z_entita = 2
 z_unita = 3
+
+
+# --- Lista risorse --- #
+class __nomi_risorse(Enum):
+    FERRO = "Ferro"
+    ZOLFO = "Zolfo"
+    CRISTALLO = "Cristallo"
+    ERBE = "Erbe"
+    SASSI = "Sassi"
 
 
 # I nomi con il doppio underscore sono necessari per

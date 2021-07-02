@@ -4,6 +4,7 @@ from random import random, randrange, shuffle
 from typing import Tuple
 
 from Entita import Entita
+from Forziere import Forziere
 from Oggetto import Oggetto
 from Risorsa import Risorsa
 
@@ -12,6 +13,7 @@ class Livello:
     def __init__(self, lato: int = 35):
         self.lista_oggetti = []
         self.lato = lato
+        self.forziere = None
 
     def matrix(self, phase=False):
         """
@@ -72,8 +74,10 @@ class Livello:
             oggetto.y = y
             if add:
                 self.lista_oggetti.append(oggetto)
-                oggetto.mappa = self
+                oggetto.on_map_enter(self)
                 self.lista_oggetti.sort(key=lambda x: x.z)
+                if isinstance(oggetto, Forziere):
+                    self.forziere = oggetto
             return peso
         else:
             print("non puoi aggiungere/muovere un oggetto in una casella occupata")
@@ -274,44 +278,3 @@ class Livello:
                 support.append(row)
             matrix = support
         return matrix
-
-
-class Forziere(Oggetto):
-    def __init__(self):
-        super().__init__()
-        self.visibile = True
-        self.sprite = "forziere"
-        self.lista_risorse = {
-            "Zolfo": 0,
-            "Ferro": 0,
-            "Erbe": 0,
-            "Cristallo": 0,
-            "Sassi": 0
-        }
-
-    def drop_item(self, item: Risorsa, donatore=None):
-        if donatore:
-            donatore.inventario.remove(item)
-        self.lista_risorse[item.nome] += 1
-        del item
-
-    def pick_item(self, item_name, raccoglitore):
-        if self.has_item(item_name):
-            class_ = getattr(Risorsa, item_name)
-            item_istance = class_()
-            self.lista_risorse[item_name] -= 1
-            raccoglitore.raccogli(item_istance, False)
-        else:
-            pass
-
-    def get_list(self):
-        return self.lista_risorse
-
-    def has_item(self, item_name):
-        return self.lista_risorse[item_name] > 0
-
-    def get_damage(self, danno, attaccante=None):
-        pass
-
-    def on_death(self):
-        pass
