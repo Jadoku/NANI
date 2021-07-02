@@ -11,6 +11,7 @@ class Player:
         self.latocasella = 64
         self.bordo = 2
         self.mostra_tutto = False
+        self.resize_scale = 0.5
         self.icon = {}
         self.running = True
 
@@ -55,41 +56,55 @@ class Player:
 
     def update(self):
         while self.running:
-
             # --- GESTIONE EVENTI ---
             for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    self.running = False
-                if event.type == pg.VIDEORESIZE:
-                    old_surface_saved = self.screen
-                    self.screen = pg.display.set_mode((event.w, event.h), pg.RESIZABLE)
-                    self.screen.blit(old_surface_saved, (0, 0))
-                    del old_surface_saved
-                if event.type == pg.KEYDOWN:
-                    omino = self.mappa.lista_oggetti[0]
-                    if event.key == pg.K_DOWN:
-                        self.mappa.add_move(omino.x, omino.y + 1, omino)
-                    if event.key == pg.K_UP:
-                        self.mappa.add_move(omino.x, omino.y - 1, omino)
-                    if event.key == pg.K_RIGHT:
-                        self.mappa.add_move(omino.x + 1, omino.y, omino)
-                    if event.key == pg.K_LEFT:
-                        self.mappa.add_move(omino.x - 1, omino.y, omino)
+                self.__gestione_quit(event)
+                self.__gestione_resize_window(event)
+                self.__gestione_input(event)
             # --- FINE GESTIONE EVENTI ---
 
-            self.screen.fill(pg.Color("black"))
-            self.grid(self.mappa.lato, self.latocasella, self.bordo)
+            self.__render_griglia()
+            self.__render_oggetti()
+            self.__render_ui()
+            self.__gestione_update()
 
-            oggetti: List[Oggetto] = self.mappa.lista_oggetti.copy()
-            for x in oggetti:
-                if x.visibile or self.mostra_tutto:
-                    self.main_screen.blit(self.icon[x.sprite],
+    def __gestione_quit(self, event):
+        if event.type == pg.QUIT:
+            self.running = False
+
+    def __gestione_resize_window(self, event):
+        if event.type == pg.VIDEORESIZE:
+            old_surface_saved = self.screen
+            less = min(event.w, event.h)
+            self.screen = pg.display.set_mode((event.w, event.h), pg.RESIZABLE)
+            self.resize_scale = less/self.dim_miniera
+            self.screen.blit(old_surface_saved, (0, 0))
+            del old_surface_saved
+
+    def __gestione_input(self, event):
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_DOWN:
+                # Fa qualcosa
+                pass
+
+    def __render_griglia(self):
+        self.screen.fill(pg.Color("black"))
+        self.grid(self.mappa.lato, self.latocasella, self.bordo)
+
+    def __render_oggetti(self):
+        oggetti: List[Oggetto] = self.mappa.lista_oggetti.copy()
+        for x in oggetti:
+            if x.visibile or self.mostra_tutto:
+                self.main_screen.blit(self.icon[x.sprite],
                                       (x.x * (self.latocasella + self.bordo), x.y * (self.latocasella + self.bordo)))
 
-            # pg.transform.scale(main_screen, (main_screen.get_width()//2, main_screen.get_height()//2), main_screen)
-            main_screen2 = pg.transform.rotozoom(self.main_screen, 0, 0.5)
-            self.screen.blit(main_screen2, (0, 0))
-            pg.display.update()
+    def __render_ui(self):
+        pass
+
+    def __gestione_update(self):
+        main_screen2 = pg.transform.rotozoom(self.main_screen, 0, self.resize_scale)
+        self.screen.blit(main_screen2, (0, 0))
+        pg.display.update()
 
     def carica_immagine(self, immagine: str, dizionario, zoom=False):
         sprites = pg.image.load(immagine).convert_alpha()
