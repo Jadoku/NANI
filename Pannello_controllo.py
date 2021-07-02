@@ -18,7 +18,7 @@ mod_movimento_acqua = 2
 mod_movimento_lava = 0
 
 # --- Miniera --- #
-livelli_miniera = 5
+livelli_miniera = 1
 dimensione_lato_livello = 35
 # Lista risorse [Ferro, Zolfo, Cristallo, Erbe]
 risorse_per_livello = [50, 50, 50, 50]

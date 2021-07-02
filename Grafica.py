@@ -85,8 +85,8 @@ class Player:
 
     def __gestione_input(self, event):
         if event.type == pg.KEYDOWN:
-            if event.key == pg.K_DOWN:
-                # Fa qualcosa
+            if event.key == pg.K_F5:
+                self.mostra_tutto = not self.mostra_tutto
                 pass
 
     def __render_griglia(self):

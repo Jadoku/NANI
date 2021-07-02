@@ -5,6 +5,7 @@ from typing import Tuple
 
 from Entita import Entita
 from Forziere import Forziere
+from Muro import Muro
 from Oggetto import Oggetto
 from Risorsa import Risorsa
 
@@ -95,8 +96,8 @@ class Livello:
 
     def load_percent(self, message, count=1, total=2) -> int:
         count += 1
-        cur = round((count / total)*100)
-        print("\r"+message, str(cur)+"%", end="")
+        cur = round((count / total) * 100)
+        print("\r" + message, str(cur) + "%", end="")
         if count >= total:
             print("\tOK!")
         return count
@@ -129,7 +130,7 @@ class Livello:
         # Scorro la matrice in blocchi da 5x5
         saved_points = []
         current = 0
-        total_size = (size[0]//5) * (size[1]//5)
+        total_size = (size[0] // 5) * (size[1] // 5)
         for y in range(0, size[1], 5):
             for x in range(0, size[0], 5):
                 # Scorre i punti scelti dall'origine x,y fino a x+w e y+h
@@ -182,10 +183,10 @@ class Livello:
             assert stop < (size[0] * size[1])
 
         # creo lo spazio vuoto di inizio
-        center = math.ceil(size[0] / 2)
+        center = math.floor(size[0] / 2)
         forziere = Forziere()
         current = 0
-
+        total_size = 25
         for y in range(center - 2, center + 3, 1):
             for x in range(center - 2, center + 3, 1):
                 w = self.get_coord(x, y, False, Muro)
@@ -197,6 +198,40 @@ class Livello:
         # creo il forziere
         self.add_move(center, center, forziere, add=True)
         self.load_percent("Piazzamento forziere...")
+        # attivo un crawler che illumini tutte le caselle dell'inizio
+        self.__start_crawler((center, center+1))
+
+    def __start_crawler(self, origin):
+        coords = [
+            (-1, -1), (0, -1), (1, -1),
+            (-1, 0), (1, 0),
+            (-1, 1), (0, 1), (1, 1)
+        ]
+
+        def illuminate(xx, yy):
+            obj = self.get_coord(xx, yy, False)
+            for e in obj:
+                e.rivela()
+
+        visited = [origin]
+        i = 0
+        while i < len(visited):
+            cx, cy = visited[i]
+            # Illumino la casella corrente
+            illuminate(cx,cy)
+            acc = self.is_accessible(cx, cy)
+            # Aggiungo tutte le caselle adiacenti che non
+            # sono in visited e se la casella di origine è transitabile
+            # tutte le vicine (i muri)
+            for x, y in coords:
+                nx, ny = cx + x, cy + y
+                if (nx, ny) not in visited and acc > 0:
+                    visited.append((nx, ny))
+                    # resetto il ciclo per fargli ricontrollare la lista intera
+                    # e non farlo uscire
+                    i = 0
+            # Aumento l'indice per fargli scorrere la lista
+            i += 1
 
     def perlin_builder(self, size: Tuple[int, int], octave=10, threshold=-2.0):
         from perlin_noise import PerlinNoise
