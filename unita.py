@@ -6,6 +6,7 @@ from IA_base import AI_base
 from Risorsa import Risorsa
 from threading import Thread
 import time
+import Pannello_controllo as pc
 
 
 class Status(Enum):
@@ -44,7 +45,7 @@ class Error(Phase):
 class Unita(Entita, ABC, Thread):
     def __init__(self, IA):
         super().__init__()
-        self.z = 3
+        self.z = pc.z_unita
         self.movimento = 1
         self.ia: AI_base = IA
         self.ia.connetti_attore(self)

@@ -1,9 +1,10 @@
 from Livello import Livello
+import Pannello_controllo as pc
 
 
 class Miniera:
-    def __init__(self, livelli: int):
-        self.numero_livelli = livelli
+    def __init__(self):
+        self.numero_livelli = pc.livelli_miniera
         self.livelli = []
 
     def genera_miniera(self):
@@ -19,7 +20,6 @@ class Miniera:
 
         :return: Il livello creato
         """
-        lev = Livello()
-        # lev.builder(lambda: lev.perlin_builder((31, 31), threshold=0))
+        lev = Livello(pc.dimensione_lato_livello)
         lev.builder()
         return lev

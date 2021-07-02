@@ -4,21 +4,23 @@ import pygame as pg
 
 from Livello import Livello
 from Oggetto import Oggetto
+import Pannello_controllo as pc
 
 
 class Player:
     def __init__(self):
-        self.latocasella = 64
-        self.bordo = 2
-        self.mostra_tutto = False
-        self.resize_scale = 0.5
+        self.latocasella = pc.lato_casella
+        self.bordo = pc.bordo_griglia
+        self.mostra_tutto = pc.mostra_tutto
+        self.resize_scale = pc.scala_finestra
+        self.dimensioni_iniziali = pc.dimensioni_finestra_iniziali
         self.icon = {}
         self.running = True
 
     def set_map(self, livello: Livello):
         self.mappa: Livello = livello
         self.dim_miniera = (self.latocasella + self.bordo) * self.mappa.lato - self.bordo
-        self.screen_size = self.larghezza, self.altezza = self.dim_miniera // 2, self.dim_miniera // 2
+        self.screen_size = self.larghezza, self.altezza = self.dimensioni_iniziali[0], self.dimensioni_iniziali[1]
         self.screen: pg.Surface
         self.main_screen: pg.Surface = pg.Surface((self.dim_miniera, self.dim_miniera), flags=pg.SRCALPHA)
 

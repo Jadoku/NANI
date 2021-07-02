@@ -1,6 +1,7 @@
 # bonamerde 2 la vendetta
 from Grafica import Player
 from Miniera import Miniera
+import Pannello_controllo as pc
 
 miniera = Miniera(1)
 miniera.genera_miniera()

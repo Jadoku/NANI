@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
 from Oggetto import *
+import Pannello_controllo as pc
 
 
 class Entita(Oggetto, ABC):
     def __init__(self):
         super().__init__()
-        self.z = 2
+        self.z = pc.z_entita
         self.vita = 10
         self.ferite = 0
         self.attacco = 0

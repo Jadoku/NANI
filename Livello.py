@@ -1,4 +1,5 @@
 import math
+import Pannello_controllo as pc
 from random import random, randrange, shuffle
 from typing import Tuple
 
@@ -9,7 +10,6 @@ from Risorsa import Risorsa
 
 class Livello:
     def __init__(self, lato: int = 35):
-        # self.matrix=[[[0,0,0]]*lato for _ in range(lato)]
         self.lista_oggetti = []
         self.lato = lato
 
@@ -30,7 +30,6 @@ class Livello:
         return matrix
 
     def get_coord(self, x, y, visuale=True, filter_by=None):
-        ret = []
         if visuale:
             ret = list(filter(lambda n: n.x == x and n.y == y and n.visibile, self.lista_oggetti))
         else:
@@ -100,7 +99,7 @@ class Livello:
 
     def builder(self, resource_array=None):
         if resource_array is None:
-            resource_array = [50, 50, 50, 50]
+            resource_array = pc.risorse_per_livello
         size = (self.lato, self.lato)
         pavimento = self.perlin_builder(size, octave=2, threshold=-0.2)
         total_size = size[0] * size[1]
