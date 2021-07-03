@@ -41,6 +41,9 @@ class Livello:
             ret = list(filter(lambda n: isinstance(n, filter_by), ret))
         return ret
 
+    def get_visible_list(self):
+        return list(filter(lambda n: n.visibile, self.lista_oggetti))
+
     def is_accessible(self, x, y):
         """
         controlla se una casella è bloccante
@@ -93,6 +96,14 @@ class Livello:
 
     def check_bounds(self, x, y):
         return (0 <= x < self.lato) and (0 <= y < self.lato)
+
+    def illuminate_area(self, xx, yy, raggio=1):
+        for y in range(yy - raggio, yy + raggio + 1, 1):
+            for x in range(xx - raggio, xx + raggio + 1, 1):
+                obj = self.get_coord(x, y, False)
+                for e in obj:
+                    if not e.visibile:
+                        e.rivela()
 
     def load_percent(self, message, count=1, total=2) -> int:
         count += 1
@@ -199,7 +210,7 @@ class Livello:
         self.add_move(center, center, forziere, add=True)
         self.load_percent("Piazzamento forziere...")
         # attivo un crawler che illumini tutte le caselle dell'inizio
-        self.__start_crawler((center, center+1))
+        self.__start_crawler((center, center + 1))
 
     def __start_crawler(self, origin):
         coords = [
@@ -218,7 +229,7 @@ class Livello:
         while i < len(visited):
             cx, cy = visited[i]
             # Illumino la casella corrente
-            illuminate(cx,cy)
+            illuminate(cx, cy)
             acc = self.is_accessible(cx, cy)
             # Aggiungo tutte le caselle adiacenti che non
             # sono in visited e se la casella di origine è transitabile
