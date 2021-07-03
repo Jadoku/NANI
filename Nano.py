@@ -17,6 +17,14 @@ class Nano(Unita, ABC):
         self.livello = 0
         self.sprite = sprite
 
+    def on_map_enter(self, mappa):
+        super(Nano, self).on_map_enter(mappa)
+        self.mappa.illuminate_area(self.x, self.y, self.percezione)
+
+    def muovi(self, nuova_destinazione=None):
+        super(Nano, self).muovi(nuova_destinazione)
+        self.mappa.illuminate_area(self.x, self.y, self.percezione)
+
     def avanzamento_livello(self):
         self.livello += 1
         self.vita += 5
