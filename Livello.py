@@ -1,13 +1,10 @@
 import math
-import Pannello_controllo as pc
 from random import random, randrange, shuffle
 from typing import Tuple
 
+import Pannello_controllo as pc
 from Entita import Entita
 from Forziere import Forziere
-from Muro import Muro
-from Oggetto import Oggetto
-from Risorsa import Risorsa
 
 
 class Livello:
@@ -131,7 +128,7 @@ class Livello:
 
         muri = self.perlin_builder(size, threshold=-0.15)
         current = 0
-        from Muro import Muro, Muro_base, Muro_ossidiana  # TODO muro di ossidiana
+        from Muro import Muro, Muro_base  # TODO muro di ossidiana
         for y in range(len(muri[0])):
             for x in range(len(muri)):
                 if muri[x][y] > 0:
