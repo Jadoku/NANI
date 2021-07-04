@@ -25,9 +25,9 @@ class Livello:
         :return: matrice con blocchi o pesi
         """
         matrix = []
-        for i in range(self.lato):
+        for j in range(self.lato):
             r = []
-            for j in range(self.lato):
+            for i in range(self.lato):
                 if phase:
                     r.append(1)
                 else:
@@ -48,7 +48,7 @@ class Livello:
         return ret
 
     def get_interactable(self, filter_by=None):
-        ret = list(filter(lambda n: n.visibile, self.lista_oggetti_visibili))
+        ret = self.lista_oggetti_visibili
         if filter_by:
             ret = list(filter(lambda n: isinstance(n, filter_by), ret))
         return ret

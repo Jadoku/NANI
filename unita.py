@@ -31,6 +31,7 @@ class Phase(Enum):
     """
     # 100-199 Errori movimento
     NESSUNA_DESTINAZIONE = 100
+    PERCORSO_INACCESSIBILE = 101
     # 200-299 Errori attacco
     BERSAGLIO_FUORI_RANGE = 200
     # 300-399 Errori raccolta
@@ -70,8 +71,9 @@ class Unita(Entita, ABC, Thread):
 
     def run(self):
         # self.ia.unit_status_update(Status.INATTIVO,Phase.START)
-        while self.ferite < self.vita:
+        while True:  # self.ferite < self.vita:
             self.ia.comando()
+        print("uscita while")
 
     def _set_status(self, new_status: Status = None, new_phase: Phase = None):
         """
@@ -89,19 +91,23 @@ class Unita(Entita, ABC, Thread):
     def passa_turno(self):
         self._set_status(Status.INATTIVO, Phase.START)
 
-    def muovi(self, nuova_destinazione=None):
-        if nuova_destinazione is not None:
-            if self.destinazione != nuova_destinazione:
-                self.percorso = self.distanza(nuova_destinazione)[1]
-                self.lunghezza_percorso = len(self.percorso)
-                self._set_status(Status.MOVIMENTO, Phase.START)
-        elif self.percorso:
+    def imposta_destinazione(self, nuova_destinazione):
+        self.percorso = self.distanza(nuova_destinazione)[1]
+        self.lunghezza_percorso = len(self.percorso)
+        if self.percorso:
+            self._set_status(Status.MOVIMENTO, Phase.START)
+        else:
+            self._set_status(Status.MOVIMENTO, Phase.PERCORSO_INACCESSIBILE)
+
+    def muovi(self):
+        if self.percorso:
             coord = self.percorso.pop(0)
+            print("coordinata", coord)
             peso = self.mappa.add_move(coord[0], coord[1], self)
             time.sleep(peso / 3)
             self._set_status(Status.MOVIMENTO, Phase.ACTIVE)
             if not self.percorso:
-                self._set_status(Status.MOVIMENTO, Phase.FINISH)
+                self._set_status(Status.MOVIMENTO, Phase.FINISHself._set_status(Status.MOVIMENTO, Phase.START))
         else:
             print("Comando muovi usato senza destinazione")
             self._set_status(Status.MOVIMENTO, Phase.NESSUNA_DESTINAZIONE)

@@ -21,8 +21,8 @@ class Nano(Unita, ABC):
         super(Nano, self).on_map_enter(mappa)
         self.mappa.illuminate_area(self.x, self.y, self.percezione)
 
-    def muovi(self, nuova_destinazione=None):
-        super(Nano, self).muovi(nuova_destinazione)
+    def muovi(self):
+        super(Nano, self).muovi()
         self.mappa.illuminate_area(self.x, self.y, self.percezione)
 
     def avanzamento_livello(self):
