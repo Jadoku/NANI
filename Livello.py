@@ -39,11 +39,18 @@ class Livello:
             ret = list(filter(lambda n: isinstance(n, filter_by), ret))
         return ret
 
-    def get_visible(self):
-        return list(filter(lambda n: n.visibile, self.lista_oggetti))
+    def get_visible(self, filter_by=None):
+        ret = list(filter(lambda n: n.visibile, self.lista_oggetti))
+        if filter_by:
+            ret = list(filter(lambda n: isinstance(n, filter_by), ret))
+        return ret
 
-    def get_known(self):
-        return list(filter(lambda n: self.is_accessible(n.x, n.y) > 0, self.get_visible()))
+    def get_accessible_cells(self):
+        lst = list(filter(lambda n: self.is_accessible(n.x, n.y) > 0, self.get_visible()))
+        res = []
+        for r in lst:
+            res.append((r.x, r.y))
+        return list(dict.fromkeys(res))
 
     def is_accessible(self, x, y):
         """
