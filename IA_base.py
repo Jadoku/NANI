@@ -29,6 +29,7 @@ class AI_base(ABC):
 class AI_placeholder(AI_base):
 
     def comando(self):
+        print(self.attore.sprite, "fa cose")
         pass
 
     def unit_status_update(self, status, phase):

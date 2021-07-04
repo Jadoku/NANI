@@ -47,7 +47,8 @@ class Phase(Enum):
 
 class Unita(Entita, ABC, Thread):
     def __init__(self, IA):
-        super().__init__()
+        super(Unita, self).__init__()
+        Thread.__init__(self)
         self.z = pc.z_unita
         self.movimento = 1
         self.ia: AI_base = IA
@@ -69,7 +70,7 @@ class Unita(Entita, ABC, Thread):
 
     def run(self):
         while self.ferite < self.vita:
-            AI_base.comando()
+            self.ia.comando()
 
     def _set_status(self, new_status: Status = None, new_phase: Phase = None):
         """

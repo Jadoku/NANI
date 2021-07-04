@@ -26,6 +26,9 @@ for n in nani:
     pos = choice(L.get_accessible_cells())
     L.add_move(pos[0], pos[1], n, add=True)
 
+for n in L.lista_nani:
+    n.start()
+
 gr.set_map(L)
 gr.start()
 gr.setup()
