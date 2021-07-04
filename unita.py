@@ -68,8 +68,8 @@ class Unita(Entita, ABC, Thread):
         super().on_map_enter(mappa)
         self.forziere = mappa.forziere
 
-
     def run(self):
+        self._set_status(Status.INATTIVO, Phase.START)
         while self.ferite < self.vita:
             self.ia.comando()
 
@@ -86,8 +86,11 @@ class Unita(Entita, ABC, Thread):
             self.status_phase = new_phase
         self.ia.unit_status_update(self.status, self.status_phase)
 
+    def passa_turno(self):
+        self._set_status(Status.INATTIVO, Phase.START)
+
     def muovi(self, nuova_destinazione=None):
-        if not nuova_destinazione:
+        if nuova_destinazione is not None:
             if self.destinazione != nuova_destinazione:
                 self.percorso = self.distanza(nuova_destinazione)[1]
                 self.lunghezza_percorso = len(self.percorso)

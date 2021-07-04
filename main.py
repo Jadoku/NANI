@@ -16,12 +16,16 @@ gr = Player()
 # Imposto il livello da visualizzare
 L: Livello = miniera.livelli[0]
 
-from Nano import Minatore, Guardia, Cerusico, Prospettore
-from IA_base import AI_placeholder
+gr.set_map(L)
+gr.start()
+gr.setup()
+
+from Nano import Minatore
+from IA_base import AI_minatore
 
 # Carica i nani in gioco con una ai
-nani = [Minatore(AI_placeholder()), Guardia(AI_placeholder()), Cerusico(AI_placeholder()),
-        Prospettore(AI_placeholder())]
+# nani = [Minatore(AI_minatore()), Guardia(AI_placeholder()), Cerusico(AI_placeholder()),Prospettore(AI_placeholder())]
+nani = [Minatore(AI_minatore())]
 for n in nani:
     pos = choice(L.get_accessible_cells())
     L.add_move(pos[0], pos[1], n, add=True)
@@ -29,7 +33,4 @@ for n in nani:
 for n in L.lista_nani:
     n.start()
 
-gr.set_map(L)
-gr.start()
-gr.setup()
 gr.update()

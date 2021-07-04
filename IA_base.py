@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
+from random import choice
 
 
 class AI_base(ABC):
+
     def __init__(self):
         self.attore = None
 
@@ -29,8 +31,48 @@ class AI_base(ABC):
 class AI_placeholder(AI_base):
 
     def comando(self):
-        print(self.attore.sprite, "fa cose")
         pass
 
     def unit_status_update(self, status, phase):
         pass
+
+
+class AI_minatore(AI_base):
+    """
+    Muove e mina senza fare altro
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.target = None
+        self.move = False
+        self.mine = False
+
+    def comando(self):
+        print("Minatore", self.target, self.move, self.mine)
+        if self.move:
+            print("Minatore muove")
+            self.attore.muovi()
+        if self.mine:
+            if self.target:
+                print("Minatore mina")
+                self.attore.azione(self.target)
+            else:
+                print("minatore ha finito di minare")
+                self.attore.passa_turno()
+
+    def unit_status_update(self, status, phase):
+        print("Minatore:", status.name, phase.name)
+        from unita import Status, Phase
+        if status == Status.INATTIVO:
+            self.mine = False
+            self.move = False
+            # Se inattivo, si mette a cercare un oggetto da minare più vicino
+            from Muro import Muro_base
+            self.target = choice(self.attore.mappa.get_visible(filter_by=Muro_base))
+            self.attore.muovi(self.target)
+        if status == Status.MOVIMENTO and phase == Phase.START:
+            self.move = True
+        if status == Status.MOVIMENTO and phase == Phase.FINISH:
+            self.move = False
+            self.mine = True
