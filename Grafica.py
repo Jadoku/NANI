@@ -2,9 +2,9 @@ from typing import List
 
 import pygame as pg
 
+import Pannello_controllo as pc
 from Livello import Livello
 from Oggetto import Oggetto
-import Pannello_controllo as pc
 
 
 class Player:
@@ -94,7 +94,7 @@ class Player:
         self.grid(self.mappa.lato, self.latocasella, self.bordo)
 
     def __render_oggetti(self):
-        oggetti: List[Oggetto] = self.mappa.lista_oggetti.copy()
+        oggetti: List[Oggetto] = self.mappa.lista_oggetti_render.copy()
         for x in oggetti:
             if x.visibile or self.mostra_tutto:
                 self.main_screen.blit(self.icon[x.sprite],

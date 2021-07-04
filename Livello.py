@@ -5,14 +5,24 @@ from typing import Tuple
 import Pannello_controllo as pc
 from Entita import Entita
 from Forziere import Forziere
+from Pavimento import Pavimento
 
 
 class Livello:
     def __init__(self, lato: int = 35):
-        self.lista_oggetti = []
+        self.lista_pavimenti = []
+        self.lista_interagibili = []
         self.lato = lato
         self.forziere = None
         self.lista_nani = []
+
+    @property
+    def lista_oggetti(self):
+        return self.lista_pavimenti + self.lista_interagibili
+
+    @property
+    def lista_oggetti_render(self):
+        return self.get_visible()
 
     def matrix(self, phase=False):
         """
@@ -30,17 +40,20 @@ class Livello:
             matrix.append(r)
         return matrix
 
-    def get_coord(self, x, y, visuale=True, filter_by=None):
-        if visuale:
-            ret = list(filter(lambda n: n.x == x and n.y == y and n.visibile, self.lista_oggetti))
-        else:
-            ret = list(filter(lambda n: n.x == x and n.y == y, self.lista_oggetti))
+    def get_coord(self, x, y, filter_by=None):
+        ret = list(filter(lambda n: n.x == x and n.y == y, self.lista_oggetti))
         if filter_by:
             ret = list(filter(lambda n: isinstance(n, filter_by), ret))
         return ret
 
     def get_visible(self, filter_by=None):
         ret = list(filter(lambda n: n.visibile, self.lista_oggetti))
+        if filter_by:
+            ret = list(filter(lambda n: isinstance(n, filter_by), ret))
+        return ret
+
+    def get_interactable(self, filter_by=None):
+        ret = list(filter(lambda n: n.visibile, self.lista_interagibili))
         if filter_by:
             ret = list(filter(lambda n: isinstance(n, filter_by), ret))
         return ret
@@ -85,9 +98,12 @@ class Livello:
             oggetto.x = x
             oggetto.y = y
             if add:
-                self.lista_oggetti.append(oggetto)
-                oggetto.on_map_enter(self)
-                self.lista_oggetti.sort(key=lambda x: x.z)
+                if isinstance(oggetto, Pavimento):
+                    self.lista_pavimenti.append(oggetto)
+                else:
+                    self.lista_interagibili.append(oggetto)
+                    oggetto.on_map_enter(self)
+                    self.lista_interagibili.sort(key=lambda x: x.z)
                 if isinstance(oggetto, Forziere):
                     self.forziere = oggetto
                 from Nano import Nano
@@ -99,7 +115,7 @@ class Livello:
             return 0
 
     def remove_item(self, oggetto, destroy=False):
-        self.lista_oggetti.remove(oggetto)
+        self.lista_interagibili.remove(oggetto)
         if isinstance(oggetto, Entita) and not destroy:
             for i in oggetto.inventario:
                 self.add_move(oggetto.x, oggetto.y, i, True)
@@ -111,7 +127,7 @@ class Livello:
     def illuminate_area(self, xx, yy, raggio=1):
         for y in range(yy - raggio, yy + raggio + 1, 1):
             for x in range(xx - raggio, xx + raggio + 1, 1):
-                obj = self.get_coord(x, y, False)
+                obj = self.get_coord(x, y)
                 for e in obj:
                     if not e.visibile:
                         e.rivela()
@@ -187,7 +203,7 @@ class Livello:
                 p = saved_points[i].pop(0)
                 r = randrange(0, len(resource_classes))
                 inst = resource_classes[r]()
-                muro = self.get_coord(p[0], p[1], False, Muro_base)[0]
+                muro = self.get_coord(p[0], p[1], Muro_base)[0]
                 muro.inventario.append(inst)
                 resource_count[r] -= 1
                 if resource_count[r] == 0:
@@ -211,7 +227,7 @@ class Livello:
         total_size = 25
         for y in range(center - 2, center + 3, 1):
             for x in range(center - 2, center + 3, 1):
-                w = self.get_coord(x, y, False, Muro)
+                w = self.get_coord(x, y, Muro)
                 if w:
                     if w[0].inventario:
                         forziere.drop_item(w[0].inventario[0], w[0])
@@ -231,7 +247,7 @@ class Livello:
         ]
 
         def illuminate(xx, yy):
-            obj = self.get_coord(xx, yy, False)
+            obj = self.get_coord(xx, yy)
             for e in obj:
                 e.rivela()
 

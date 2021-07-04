@@ -45,7 +45,7 @@ class AI_minatore(AI_base):
     def __init__(self):
         super().__init__()
         self.target = None
-        self.move = False
+        self.move = True
         self.mine = False
 
     def comando(self):
@@ -64,12 +64,12 @@ class AI_minatore(AI_base):
     def unit_status_update(self, status, phase):
         print("Minatore:", status.name, phase.name)
         from unita import Status, Phase
-        if status == Status.INATTIVO:
+        if status == Status.INATTIVO or Phase.NESSUNA_DESTINAZIONE:
             self.mine = False
             self.move = False
-            # Se inattivo, si mette a cercare un oggetto da minare più vicino
+            # Se inattivo, si mette a cercare un oggetto da minare a caso
             from Muro import Muro_base
-            self.target = choice(self.attore.mappa.get_visible(filter_by=Muro_base))
+            self.target = choice(self.attore.mappa.get_interactable(filter_by=Muro_base))
             self.attore.muovi(self.target)
         if status == Status.MOVIMENTO and phase == Phase.START:
             self.move = True

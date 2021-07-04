@@ -69,7 +69,7 @@ class Unita(Entita, ABC, Thread):
         self.forziere = mappa.forziere
 
     def run(self):
-        self._set_status(Status.INATTIVO, Phase.START)
+        # self.ia.unit_status_update(Status.INATTIVO,Phase.START)
         while self.ferite < self.vita:
             self.ia.comando()
 
@@ -80,9 +80,9 @@ class Unita(Entita, ABC, Thread):
         :param new_status: il nuovo segnale
         :param new_phase: la nuova fase
         """
-        if not new_status and new_status != self.status:
+        if (new_status is not None) and new_status != self.status:
             self.status = new_status
-        if new_phase and new_phase != self.status_phase:
+        if (new_phase is not None) and new_phase != self.status_phase:
             self.status_phase = new_phase
         self.ia.unit_status_update(self.status, self.status_phase)
 
