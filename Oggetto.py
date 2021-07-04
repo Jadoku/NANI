@@ -20,18 +20,15 @@ class Oggetto(ABC):
     def on_map_enter(self, mappa):
         self.mappa = mappa
 
-    def distanza(self, bersaglio=None, coordinata=None):
+    def distanza(self, bersaglio=None):
         """
         calcolo del percorso e della distanza pesata
         :param bersaglio: la coordinata bersaglio
         :return: tupla(peso totale, lista coordinate percorso)
         """
-        if bersaglio is None and coordinata is not None:
-            x, y = coordinata
-        else:
-            x, y = bersaglio.x, bersaglio.y
-
+        x, y = bersaglio.x, bersaglio.y
         liv = self.mappa.matrix()
+        # TODO Se bersaglio occlude non calcola il percorso
         grid = Grid(matrix=liv)
         start = grid.node(self.x, self.y)
         end = grid.node(x, y)
@@ -39,9 +36,7 @@ class Oggetto(ABC):
         path, runs = finder.find_path(start, end, grid)
         path = path[1:-1]
         path_leng = 0
-        for i in path:
-            x = i[0]
-            y = i[1]
+        for x, y in path:
             path_leng += liv[x][y]
         print(path_leng, path)
         return path_leng, path

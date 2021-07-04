@@ -107,7 +107,7 @@ class Unita(Entita, ABC, Thread):
             time.sleep(peso / 3)
             self._set_status(Status.MOVIMENTO, Phase.ACTIVE)
             if not self.percorso:
-                self._set_status(Status.MOVIMENTO, Phase.FINISHself._set_status(Status.MOVIMENTO, Phase.START))
+                self._set_status(Status.MOVIMENTO, Phase.FINISH)
         else:
             print("Comando muovi usato senza destinazione")
             self._set_status(Status.MOVIMENTO, Phase.NESSUNA_DESTINAZIONE)

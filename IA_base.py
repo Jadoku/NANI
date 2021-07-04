@@ -64,15 +64,22 @@ class AI_minatore(AI_base):
     def unit_status_update(self, status, phase):
         print("Minatore:", status.name, phase.name)
         from unita import Status, Phase
-        if status == Status.INATTIVO or Phase.NESSUNA_DESTINAZIONE or Phase.PERCORSO_INACCESSIBILE:
+
+        inattivo = status == Status.INATTIVO
+        no_dest = status == Status.MOVIMENTO and phase == Phase.NESSUNA_DESTINAZIONE
+        no_perco = status == Status.MOVIMENTO and phase == Phase.PERCORSO_INACCESSIBILE
+
+        inizio_movimento = status == Status.MOVIMENTO and phase == Phase.START
+        fine_movimento = status == Status.MOVIMENTO and phase == Phase.FINISH
+
+        if inattivo or no_dest or no_perco:
             self.mine = False
             self.move = False
-            # Se inattivo, si mette a cercare un oggetto da minare a caso
             from Muro import Muro_base
             self.target = choice(self.attore.mappa.get_interactable(filter_by=Muro_base))
             self.attore.imposta_destinazione(self.target)
-        if status == Status.MOVIMENTO and phase == Phase.START:
+        if inizio_movimento:
             self.move = True
-        if status == Status.MOVIMENTO and phase == Phase.FINISH:
+        if fine_movimento:
             self.move = False
-            self.mine = True
+            # self.mine = True
