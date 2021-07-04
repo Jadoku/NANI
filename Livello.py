@@ -5,24 +5,19 @@ from typing import Tuple
 import Pannello_controllo as pc
 from Entita import Entita
 from Forziere import Forziere
-from Pavimento import Pavimento
 
 
 class Livello:
     def __init__(self, lato: int = 35):
-        self.lista_pavimenti = []
-        self.lista_interagibili = []
+        self.lista_oggetti = []
+        self.lista_oggetti_visibili = []
         self.lato = lato
         self.forziere = None
         self.lista_nani = []
 
     @property
-    def lista_oggetti(self):
-        return self.lista_pavimenti + self.lista_interagibili
-
-    @property
     def lista_oggetti_render(self):
-        return self.get_visible()
+        return self.lista_oggetti_visibili
 
     def matrix(self, phase=False):
         """
@@ -47,13 +42,13 @@ class Livello:
         return ret
 
     def get_visible(self, filter_by=None):
-        ret = list(filter(lambda n: n.visibile, self.lista_oggetti))
+        ret = self.lista_oggetti_visibili
         if filter_by:
             ret = list(filter(lambda n: isinstance(n, filter_by), ret))
         return ret
 
     def get_interactable(self, filter_by=None):
-        ret = list(filter(lambda n: n.visibile, self.lista_interagibili))
+        ret = list(filter(lambda n: n.visibile, self.lista_oggetti_visibili))
         if filter_by:
             ret = list(filter(lambda n: isinstance(n, filter_by), ret))
         return ret
@@ -98,12 +93,9 @@ class Livello:
             oggetto.x = x
             oggetto.y = y
             if add:
-                if isinstance(oggetto, Pavimento):
-                    self.lista_pavimenti.append(oggetto)
-                else:
-                    self.lista_interagibili.append(oggetto)
-                    oggetto.on_map_enter(self)
-                    self.lista_interagibili.sort(key=lambda x: x.z)
+                self.lista_oggetti.append(oggetto)
+                oggetto.on_map_enter(self)
+                self.lista_oggetti.sort(key=lambda x: x.z)
                 if isinstance(oggetto, Forziere):
                     self.forziere = oggetto
                 from Nano import Nano
@@ -115,7 +107,7 @@ class Livello:
             return 0
 
     def remove_item(self, oggetto, destroy=False):
-        self.lista_interagibili.remove(oggetto)
+        self.lista_oggetti.remove(oggetto)
         if isinstance(oggetto, Entita) and not destroy:
             for i in oggetto.inventario:
                 self.add_move(oggetto.x, oggetto.y, i, True)
@@ -124,13 +116,18 @@ class Livello:
     def check_bounds(self, x, y):
         return (0 <= x < self.lato) and (0 <= y < self.lato)
 
+    def aggiungi_come_visibile(self, oggetto):
+        oggetto.rivela()
+        self.lista_oggetti_visibili.append(oggetto)
+        self.lista_oggetti_visibili.sort(key=lambda x: x.z)
+
     def illuminate_area(self, xx, yy, raggio=1):
         for y in range(yy - raggio, yy + raggio + 1, 1):
             for x in range(xx - raggio, xx + raggio + 1, 1):
                 obj = self.get_coord(x, y)
                 for e in obj:
                     if not e.visibile:
-                        e.rivela()
+                        self.aggiungi_come_visibile(e)
 
     def load_percent(self, message, count=1, total=2) -> int:
         count += 1
@@ -249,7 +246,7 @@ class Livello:
         def illuminate(xx, yy):
             obj = self.get_coord(xx, yy)
             for e in obj:
-                e.rivela()
+                self.aggiungi_come_visibile(e)
 
         visited = [origin]
         i = 0
