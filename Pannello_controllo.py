@@ -33,10 +33,8 @@ z_entita = 2
 z_unita = 3
 
 
-# I nomi con il doppio underscore sono necessari per
-# farli ignorare nel salvataggio
 # --- Lista risorse --- #
-class __nomi_risorse(Enum):
+class nomi_risorse(Enum):
     FERRO = "Ferro"
     ZOLFO = "Zolfo"
     CRISTALLO = "Cristallo"
@@ -44,6 +42,8 @@ class __nomi_risorse(Enum):
     SASSI = "Sassi"
 
 
+# I nomi con il doppio underscore sono necessari per
+# farli ignorare nel salvataggio
 def __save_data():
     import pickle
     data = {}

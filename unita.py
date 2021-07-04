@@ -69,8 +69,7 @@ class Unita(Entita, ABC, Thread):
 
     def run(self):
         while self.ferite < self.vita:
-            pass
-            # TODO AI_base.comando()
+            AI_base.comando()
 
     def _set_status(self, new_status: Status = None, new_phase: Phase = None):
         """
@@ -147,7 +146,7 @@ class Unita(Entita, ABC, Thread):
             self._set_status(Status.AZIONE, Phase.BERSAGLIO_AZIONE_FUORI_PORTATA)
             pass
 
-    def usa_forziere(self, preleva: pc.__nomi_risorse = None, deposita: Risorsa = None):
+    def usa_forziere(self, preleva: pc.nomi_risorse = None, deposita: Risorsa = None):
         self._set_status(Status.USO_FORZIERE, Phase.START)
         if not self.in_range(self.forziere):
             self._set_status(Status.USO_FORZIERE, Phase.FORZIERE_FUORI_PORTATA)

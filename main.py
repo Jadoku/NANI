@@ -1,7 +1,8 @@
-from Grafica import Player
-from Miniera import Miniera
-import Pannello_controllo as pc
+from random import choice
 
+from Grafica import Player
+from Livello import Livello
+from Miniera import Miniera
 
 # Creo la miniera
 miniera = Miniera()
@@ -13,10 +14,18 @@ miniera.genera_miniera()
 gr = Player()
 
 # Imposto il livello da visualizzare
+L: Livello = miniera.livelli[0]
 
+from Nano import Minatore, Guardia, Cerusico, Prospettore
+from IA_base import AI_placeholder
 
-L = miniera.livelli[0]
-gr.mostra_tutto = False
+# Carica i nani in gioco con una ai
+nani = [Minatore(AI_placeholder()), Guardia(AI_placeholder()), Cerusico(AI_placeholder()),
+        Prospettore(AI_placeholder())]
+for n in nani:
+    pos = choice(L.get_accessible_cells())
+    L.add_move(pos[0], pos[1], n, add=True)
+
 gr.set_map(L)
 gr.start()
 gr.setup()
