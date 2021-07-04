@@ -68,6 +68,7 @@ class Unita(Entita, ABC, Thread):
         super().on_map_enter(mappa)
         self.forziere = mappa.forziere
 
+
     def run(self):
         while self.ferite < self.vita:
             self.ia.comando()

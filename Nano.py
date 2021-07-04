@@ -50,7 +50,7 @@ class Minatore(Nano):
 
 class Guardia(Nano):
     def __init__(self, AI):
-        super(Guardia, self).__init__(AI,"guardia", 100, 10, 1, 1)
+        super(Guardia, self).__init__(AI, "guardia", 100, 10, 1, 1)
 
     def esegui(self, target, *args):
         if isinstance(target, Unita):
@@ -63,7 +63,7 @@ class Guardia(Nano):
 
 class Cerusico(Nano):
     def __init__(self, AI):
-        super(Cerusico, self).__init__(AI,"cerusico", 100, 2, 1, 5)
+        super(Cerusico, self).__init__(AI, "cerusico", 100, 2, 1, 5)
 
     def esegui(self, target, *args):
         if isinstance(target, Unita) and any(isinstance(x, Erbe) for x in self.inventario):
