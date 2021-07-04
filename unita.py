@@ -1,12 +1,12 @@
+import time
 from abc import ABC, abstractmethod
 from enum import Enum
+from threading import Thread
 
+import Pannello_controllo as pc
 from Entita import Entita
 from IA_base import AI_base
 from Risorsa import Risorsa
-from threading import Thread
-import time
-import Pannello_controllo as pc
 
 
 class Status(Enum):
@@ -26,8 +26,6 @@ class Phase(Enum):
     ACTIVE = 0.5
     FINISH = 1
 
-
-class Error(Phase):
     """
     Errori da passare come phase del comando
     """
@@ -102,7 +100,7 @@ class Unita(Entita, ABC, Thread):
                 self._set_status(Status.MOVIMENTO, Phase.FINISH)
         else:
             print("Comando muovi usato senza destinazione")
-            self._set_status(Status.MOVIMENTO, Error.NESSUNA_DESTINAZIONE)
+            self._set_status(Status.MOVIMENTO, Phase.NESSUNA_DESTINAZIONE)
 
     def _attacca(self, bersaglio):
         self._set_status(Status.ATTACCO, Phase.START)
@@ -111,7 +109,7 @@ class Unita(Entita, ABC, Thread):
             time.sleep(0.5)
             self._set_status(Status.ATTACCO, Phase.FINISH)
         else:
-            self._set_status(Status.ATTACCO, Error.BERSAGLIO_FUORI_RANGE)
+            self._set_status(Status.ATTACCO, Phase.BERSAGLIO_FUORI_RANGE)
 
     def raccogli(self, target, da_mappa=True):
         """
@@ -131,11 +129,11 @@ class Unita(Entita, ABC, Thread):
                     time.sleep(0.2)
                     self._set_status(Status.RACCOLTA, Phase.FINISH)
                 else:
-                    self._set_status(Status.RACCOLTA, Error.INVENTARIO_PIENO)
+                    self._set_status(Status.RACCOLTA, Phase.INVENTARIO_PIENO)
             else:
-                self._set_status(Status.RACCOLTA, Error.RISORSA_FUORI_RANGE)
+                self._set_status(Status.RACCOLTA, Phase.RISORSA_FUORI_RANGE)
         else:
-            self._set_status(Status.RACCOLTA, Error.TENTATA_RACCOLTA_NON_RISORSA)
+            self._set_status(Status.RACCOLTA, Phase.TENTATA_RACCOLTA_NON_RISORSA)
 
     def in_range(self, bersaglio):
         return len(self.distanza(bersaglio)[1]) <= self.portata
@@ -146,26 +144,26 @@ class Unita(Entita, ABC, Thread):
             self.esegui(target)
             self._set_status(Status.AZIONE, Phase.FINISH)
         else:
-            self._set_status(Status.AZIONE, Error.BERSAGLIO_AZIONE_FUORI_PORTATA)
+            self._set_status(Status.AZIONE, Phase.BERSAGLIO_AZIONE_FUORI_PORTATA)
             pass
 
     def usa_forziere(self, preleva: pc.__nomi_risorse = None, deposita: Risorsa = None):
         self._set_status(Status.USO_FORZIERE, Phase.START)
         if not self.in_range(self.forziere):
-            self._set_status(Status.USO_FORZIERE, Error.FORZIERE_FUORI_PORTATA)
+            self._set_status(Status.USO_FORZIERE, Phase.FORZIERE_FUORI_PORTATA)
             return
         if preleva:
             if self.forziere.has_item(preleva.value):
                 self.forziere.pick_item(preleva.value, self)
                 self._set_status(Status.USO_FORZIERE, Phase.FINISH)
             else:
-                self._set_status(Status.USO_FORZIERE, Error.RISORSA_MANCANTE)
+                self._set_status(Status.USO_FORZIERE, Phase.RISORSA_MANCANTE)
         elif deposita:
             if deposita in self.inventario:
                 self.forziere.drop_item(deposita)
                 self.inventario.remove(deposita)
             else:
-                self._set_status(Status.USO_FORZIERE, Error.RISORSA_DA_DEPOSITARE_NON_POSSEDUTA)
+                self._set_status(Status.USO_FORZIERE, Phase.RISORSA_DA_DEPOSITARE_NON_POSSEDUTA)
 
     @abstractmethod
     def esegui(self, target, *args):
