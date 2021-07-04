@@ -12,6 +12,7 @@ class Livello:
         self.lista_oggetti = []
         self.lato = lato
         self.forziere = None
+        self.lista_nani = []
 
     def matrix(self, phase=False):
         """
@@ -79,6 +80,9 @@ class Livello:
                 self.lista_oggetti.sort(key=lambda x: x.z)
                 if isinstance(oggetto, Forziere):
                     self.forziere = oggetto
+                from Nano import Nano
+                if isinstance(oggetto, Nano):
+                    self.lista_nani.append(oggetto)
             return peso
         else:
             print("non puoi aggiungere/muovere un oggetto in una casella occupata")
