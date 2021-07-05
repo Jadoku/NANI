@@ -25,9 +25,9 @@ class Livello:
         :return: matrice con blocchi o pesi
         """
         matrix = []
-        for j in range(self.lato):
+        for i in range(self.lato):
             r = []
-            for i in range(self.lato):
+            for j in range(self.lato):
                 if phase:
                     r.append(1)
                 else:
@@ -107,7 +107,10 @@ class Livello:
             return 0
 
     def remove_item(self, oggetto, destroy=False):
-        self.lista_oggetti.remove(oggetto)
+        if oggetto in self.lista_oggetti:
+            self.lista_oggetti.remove(oggetto)
+        if oggetto in self.lista_oggetti_visibili:
+            self.lista_oggetti_visibili.remove(oggetto)
         if isinstance(oggetto, Entita) and not destroy:
             for i in oggetto.inventario:
                 self.add_move(oggetto.x, oggetto.y, i, True)
