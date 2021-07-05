@@ -2,7 +2,7 @@ from abc import ABC
 
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
-from pathfinding.finder.a_star import AStarFinder
+from pathfinding.finder.bi_a_star import BiAStarFinder
 
 
 class Oggetto(ABC):
@@ -16,6 +16,7 @@ class Oggetto(ABC):
         self.mappa = None
         self.sprite = None
         self.visibile = False
+        self.__finder = BiAStarFinder(diagonal_movement=DiagonalMovement.if_at_most_one_obstacle)
 
     def on_map_enter(self, mappa):
         self.mappa = mappa
@@ -28,17 +29,19 @@ class Oggetto(ABC):
         """
         x, y = bersaglio.x, bersaglio.y
         liv = self.mappa.matrix()
+        # liv[self.x][self.y] = 9
+        # liv[x][y] = 9
         # TODO Se bersaglio occlude non calcola il percorso
         grid = Grid(matrix=liv)
         start = grid.node(self.x, self.y)
         end = grid.node(x, y)
-        finder = AStarFinder(diagonal_movement=DiagonalMovement.if_at_most_one_obstacle)
-        path, runs = finder.find_path(start, end, grid)
+        path, runs = self.__finder.find_path(start, end, grid)
         path = path[1:-1]
         path_leng = 0
+        grid.cleanup()
         for x, y in path:
             path_leng += liv[x][y]
-        print(path_leng, path)
+        print(path_leng, path, runs)
         return path_leng, path
 
     def rivela(self):
