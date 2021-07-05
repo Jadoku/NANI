@@ -73,7 +73,6 @@ class Unita(Entita, ABC, Thread):
         # self.ia.unit_status_update(Status.INATTIVO,Phase.START)
         while True:  # self.ferite < self.vita:
             self.ia.comando()
-        print("uscita while")
 
     def _set_status(self, new_status: Status = None, new_phase: Phase = None):
         """
@@ -115,11 +114,14 @@ class Unita(Entita, ABC, Thread):
     def _attacca(self, bersaglio):
         self._set_status(Status.ATTACCO, Phase.START)
         if self.in_range(bersaglio):
-            bersaglio.get_damage(self.attacco, self)
-            time.sleep(0.5)
+            self._deal_damage(self.attacco)
             self._set_status(Status.ATTACCO, Phase.FINISH)
         else:
             self._set_status(Status.ATTACCO, Phase.BERSAGLIO_FUORI_RANGE)
+
+    def _deal_damage(self, bersaglio):
+        bersaglio.get_damage(self.attacco, self)
+        time.sleep(0.5)
 
     def raccogli(self, target, da_mappa=True):
         """

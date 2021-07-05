@@ -41,7 +41,7 @@ class Minatore(Nano):
 
     def esegui(self, target, *agrs):
         if isinstance(target, Muro_base):
-            self._attacca(target)
+            self._deal_damage(target)
 
     def _level_up(self):
         self.slot_inventario += 1
@@ -54,7 +54,7 @@ class Guardia(Nano):
 
     def esegui(self, target, *args):
         if isinstance(target, Unita):
-            self._attacca(target)
+            self._deal_damage(target)
 
     def _level_up(self):
         self.attacco += 5
