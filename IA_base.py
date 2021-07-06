@@ -74,7 +74,7 @@ class AI_minatore(AI_base):
             self.mine = False
             self.move = False
             from Muro import Muro_base
-            self.target = choice(self.attore.mappa.get_interactable(filter_by=Muro_base))
+            self.target = choice(self.attore.mappa.get_visible(filter_by=Muro_base))
             self.attore.imposta_destinazione(self.target)
         if inizio_movimento:
             self.move = True

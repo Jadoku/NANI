@@ -55,6 +55,8 @@ class Player:
         self.carica_immagine("immagini/tiles.png", tiles)
         self.carica_immagine("immagini/gemme2.png", icone_risorse)
         self.carica_immagine("immagini/treasure_chests_32x32.png", forzieri)
+        self.carica_immagine("immagini/sassi.png", {"sassi":(0, 0)})
+
 
     def update(self):
         while self.running:

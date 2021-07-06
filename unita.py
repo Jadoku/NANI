@@ -91,10 +91,12 @@ class Unita(Entita, ABC, Thread):
         self._set_status(Status.INATTIVO, Phase.START)
 
     def imposta_destinazione(self, nuova_destinazione):
-        self.percorso = self.distanza(nuova_destinazione)[1]
+        peso, self.percorso, adiacenza = self.distanza(nuova_destinazione)
         self.lunghezza_percorso = len(self.percorso)
         if self.percorso:
             self._set_status(Status.MOVIMENTO, Phase.START)
+        elif adiacenza <= 2:
+            self._set_status(Status.MOVIMENTO, Phase.FINISH)
         else:
             self._set_status(Status.MOVIMENTO, Phase.PERCORSO_INACCESSIBILE)
 

@@ -16,7 +16,7 @@ class Oggetto(ABC):
         self.mappa = None
         self.sprite = None
         self.visibile = False
-        self.__finder = BiAStarFinder(diagonal_movement=DiagonalMovement.if_at_most_one_obstacle)
+        self.__finder = BiAStarFinder(diagonal_movement=DiagonalMovement.always)
 
     def on_map_enter(self, mappa):
         self.mappa = mappa
@@ -25,7 +25,7 @@ class Oggetto(ABC):
         """
         calcolo del percorso e della distanza pesata
         :param bersaglio: la coordinata bersaglio
-        :return: tupla(peso totale, lista coordinate percorso)
+        :return: tupla(peso totale, lista coordinate percorso, distanza non modificata dal taglio dell'ultima casella)
         """
         x, y = bersaglio.x, bersaglio.y
         liv = self.mappa.matrix()
@@ -33,12 +33,14 @@ class Oggetto(ABC):
         start = grid.node(self.x, self.y)
         end = grid.node(x, y)
         path, runs = self.__finder.find_path(start, end, grid)
+        print("lunghezza percorso: ",len(path))
+        distanza_reale = len(path)
         path = path[1:-1]
         path_leng = 0
         grid.cleanup()
         for x, y in path:
             path_leng += liv[x][y]
-        return path_leng, path
+        return path_leng, path, distanza_reale
 
     def rivela(self):
         self.visibile = True

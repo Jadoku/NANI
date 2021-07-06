@@ -16,6 +16,7 @@ class Sassi(Risorsa):
     def __init__(self):
         super().__init__()
         self.nome = self.get_name()
+        self.sprite = "sassi"
 
 
 class Ferro(Risorsa):

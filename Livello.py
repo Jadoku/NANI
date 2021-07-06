@@ -42,18 +42,21 @@ class Livello:
         return ret
 
     def get_visible(self, filter_by=None):
-        ret = self.lista_oggetti_visibili
-        if filter_by:
-            ret = list(filter(lambda n: isinstance(n, filter_by), ret))
-        return ret
-
-    def get_interactable(self, filter_by=None):
+        """
+        restituisce tutti gli oggetti visibili.
+        :param filter_by: per classe di oggetto (muro, muro base, risorsa, pietra...)
+        :return: lista di oggetti (filtrata se con filtro)
+        """
         ret = self.lista_oggetti_visibili
         if filter_by:
             ret = list(filter(lambda n: isinstance(n, filter_by), ret))
         return ret
 
     def get_accessible_cells(self):
+        """
+        restituisce la lista di celle transitabili e visibili
+        :return: lista di tuple (coordinate) delle celle libere visibili
+        """
         lst = list(filter(lambda n: self.is_accessible(n.x, n.y) > 0, self.get_visible()))
         res = []
         for r in lst:
