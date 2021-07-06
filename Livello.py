@@ -113,8 +113,9 @@ class Livello:
             self.lista_oggetti_visibili.remove(oggetto)
         if isinstance(oggetto, Entita) and not destroy:
             for i in oggetto.inventario:
-                self.add_move(oggetto.x, oggetto.y, i, True)
-        return oggetto
+                self.add_move(oggetto.x, oggetto.y, i, True, True)
+                i.rivela()
+        del oggetto
 
     def check_bounds(self, x, y):
         return (0 <= x < self.lato) and (0 <= y < self.lato)

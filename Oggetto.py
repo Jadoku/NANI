@@ -29,9 +29,6 @@ class Oggetto(ABC):
         """
         x, y = bersaglio.x, bersaglio.y
         liv = self.mappa.matrix()
-        # liv[self.x][self.y] = 9
-        # liv[x][y] = 9
-        # TODO Se bersaglio occlude non calcola il percorso
         grid = Grid(matrix=liv)
         start = grid.node(self.x, self.y)
         end = grid.node(x, y)
@@ -41,7 +38,6 @@ class Oggetto(ABC):
         grid.cleanup()
         for x, y in path:
             path_leng += liv[x][y]
-        print(path_leng, path, runs)
         return path_leng, path
 
     def rivela(self):

@@ -12,7 +12,7 @@ class Muro(Entita, ABC):
     def get_damage(self, danno, attaccante=None):
         super().get_damage(danno)
         for _ in range(danno):
-            self.mappa.add_move(attaccante.x, attaccante.y, Sassi(), add=True)
+            self.mappa.add_move(attaccante.x, attaccante.y, Sassi(), add=True, phase=True)
 
 
 class Muro_base(Muro):

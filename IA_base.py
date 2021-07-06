@@ -49,16 +49,13 @@ class AI_minatore(AI_base):
         self.mine = False
 
     def comando(self):
-        print("Minatore", self.target, self.move, self.mine)
         if self.move:
-            print("Minatore muove")
             self.attore.muovi()
         if self.mine:
-            if self.target:
-                print("Minatore mina")
+            if self.target.ferite < self.target.vita:
                 self.attore.azione(self.target)
             else:
-                print("minatore ha finito di minare")
+                self.mine = False
                 self.attore.passa_turno()
 
     def unit_status_update(self, status, phase):
@@ -66,6 +63,7 @@ class AI_minatore(AI_base):
         from unita import Status, Phase
 
         inattivo = status == Status.INATTIVO
+
         no_dest = status == Status.MOVIMENTO and phase == Phase.NESSUNA_DESTINAZIONE
         no_perco = status == Status.MOVIMENTO and phase == Phase.PERCORSO_INACCESSIBILE
 
@@ -82,4 +80,4 @@ class AI_minatore(AI_base):
             self.move = True
         if fine_movimento:
             self.move = False
-            # self.mine = True
+            self.mine = True
