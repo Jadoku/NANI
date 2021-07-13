@@ -70,7 +70,7 @@ class Unita(Entita, ABC, Thread):
         self.forziere = mappa.forziere
 
     def run(self):
-        # self.ia.unit_status_update(Status.INATTIVO,Phase.START)
+        self._set_status(Status.INATTIVO, Phase.START)
         while True:  # self.ferite < self.vita:
             self.ia.comando()
 
@@ -106,13 +106,13 @@ class Unita(Entita, ABC, Thread):
 
     def muovi(self):
         if self.percorso:
+            self._set_status(Status.MOVIMENTO, Phase.ACTIVE)
             coord = self.percorso.pop(0)
             print("coordinata", coord)
             peso = self.mappa.add_move(coord[0], coord[1], self)
             time.sleep(peso / 3)
-            self._set_status(Status.MOVIMENTO, Phase.ACTIVE)
-            if not self.percorso:
-                self._set_status(Status.MOVIMENTO, Phase.FINISH)
+        elif not self.percorso:
+            self._set_status(Status.MOVIMENTO, Phase.FINISH)
         else:
             print("Comando muovi usato senza destinazione")
             self._set_status(Status.MOVIMENTO, Phase.NESSUNA_DESTINAZIONE)

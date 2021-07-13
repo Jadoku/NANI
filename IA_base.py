@@ -45,7 +45,7 @@ class AI_minatore(AI_base):
     def __init__(self):
         super().__init__()
         self.target = None
-        self.move = True
+        self.move = False
         self.mine = False
 
     def comando(self):
@@ -81,7 +81,7 @@ class AI_minatore(AI_base):
         if inizio_movimento or fuori_portata:
             self.mine = False
             self.move = True
-        if fine_movimento:
+        if self.target and fine_movimento:
             self.move = False
             self.mine = True
 
