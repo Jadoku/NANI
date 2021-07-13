@@ -6,7 +6,7 @@ gioco, questo file può essere salvato e caricato e va caricato prima di tutti
 # --- Grafica --- #
 from enum import Enum
 
-mostra_tutto = False
+mostra_tutto = False #TODO risistemare il mostra_tutto
 lato_casella = 64
 bordo_griglia = 2
 scala_finestra = 0.5

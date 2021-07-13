@@ -17,6 +17,7 @@ class Oggetto(ABC):
         self.sprite = None
         self.visibile = False
         self.__finder = BiAStarFinder(diagonal_movement=DiagonalMovement.always)
+        self.__finder.weighted = True
 
     def on_map_enter(self, mappa):
         self.mappa = mappa
@@ -29,6 +30,7 @@ class Oggetto(ABC):
         """
         x, y = bersaglio.x, bersaglio.y
         liv = self.mappa.matrix()
+        liv[self.x][self.y] = 1
         grid = Grid(matrix=liv)
         start = grid.node(self.x, self.y)
         end = grid.node(x, y)

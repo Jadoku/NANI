@@ -16,6 +16,9 @@ gr = Player()
 # Imposto il livello da visualizzare
 L: Livello = miniera.livelli[0]
 
+for n in L.matrix():
+    print(n)
+
 gr.set_map(L)
 gr.start()
 gr.setup()

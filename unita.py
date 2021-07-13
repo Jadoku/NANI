@@ -93,9 +93,9 @@ class Unita(Entita, ABC, Thread):
 
     def imposta_destinazione(self, nuova_destinazione):
         new_path = peso, percorso, distanza = self.distanza(nuova_destinazione)
-        if percorso and distanza > 1:
+        if distanza > 1:
             self._set_status(Status.MOVIMENTO, Phase.START, new_path)
-        elif percorso and 0 <= distanza <= 1:
+        elif 0 <= distanza <= 1:
             self._set_status(Status.MOVIMENTO, Phase.FINISH, new_path)
             return
         else:
@@ -155,7 +155,8 @@ class Unita(Entita, ABC, Thread):
             self._set_status(Status.RACCOLTA, Phase.TENTATA_RACCOLTA_NON_RISORSA)
 
     def in_range(self, bersaglio):
-        return self.portata >= self.distanza(bersaglio)[2] > 0
+        return max(abs(self.x - bersaglio.x), abs(self.y - bersaglio.y)) <= self.portata
+        # return self.portata >= self.distanza(bersaglio)[2] > 0
 
     def azione(self, target):
         self._set_status(Status.AZIONE, Phase.START)
