@@ -18,7 +18,7 @@ class AI_base(ABC):
         pass
 
     @abstractmethod
-    def unit_status_update(self, status, phase):
+    def unit_status_update(self, status, phase, msg):
         """
         Semplice observer che notifica il cambio di status dell'attore
 
@@ -33,7 +33,7 @@ class AI_placeholder(AI_base):
     def comando(self):
         pass
 
-    def unit_status_update(self, status, phase):
+    def unit_status_update(self, status, phase, msg):
         pass
 
 
@@ -58,8 +58,8 @@ class AI_minatore(AI_base):
                 self.mine = False
                 self.attore.passa_turno()
 
-    def unit_status_update(self, status, phase):
-        print("Minatore:", status.name, phase.name)
+    def unit_status_update(self, status, phase, msg):
+        print("Minatore:", status.name, phase.name," - ", msg)
         from unita import Status, Phase
 
         inattivo = status == Status.INATTIVO
@@ -70,14 +70,18 @@ class AI_minatore(AI_base):
         inizio_movimento = status == Status.MOVIMENTO and phase == Phase.START
         fine_movimento = status == Status.MOVIMENTO and phase == Phase.FINISH
 
+        fuori_portata = status == Status.AZIONE and phase == Phase.BERSAGLIO_AZIONE_FUORI_PORTATA
+
         if inattivo or no_dest or no_perco:
             self.mine = False
             self.move = False
             from Muro import Muro_base
             self.target = choice(self.attore.mappa.get_visible(filter_by=Muro_base))
             self.attore.imposta_destinazione(self.target)
-        if inizio_movimento:
+        if inizio_movimento or fuori_portata:
+            self.mine = False
             self.move = True
         if fine_movimento:
             self.move = False
             self.mine = True
+

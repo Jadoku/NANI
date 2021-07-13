@@ -33,9 +33,15 @@ class Oggetto(ABC):
         start = grid.node(self.x, self.y)
         end = grid.node(x, y)
         path, runs = self.__finder.find_path(start, end, grid)
-        print("lunghezza percorso: ",len(path))
-        distanza_reale = len(path)
-        path = path[1:-1]
+        print("partenza", (self.x, self.y), "arrivo", (x, y), path, runs)
+        if not path:
+            return 0, path, -1
+        path.remove((self.x, self.y)) # rimuovo la posizione del giocatore
+        if (self.x, self.y) != (x, y):
+            distanza_reale = len(path)  # Ho la distanza dal personaggio in quadretti
+            path.remove((x, y))  # tolgo le coordinate del bersaglio
+        else:
+            distanza_reale = 0  # se il bersaglio nella stessa casella restituisce zero
         path_leng = 0
         grid.cleanup()
         for x, y in path:

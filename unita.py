@@ -74,31 +74,35 @@ class Unita(Entita, ABC, Thread):
         while True:  # self.ferite < self.vita:
             self.ia.comando()
 
-    def _set_status(self, new_status: Status = None, new_phase: Phase = None):
+    def _set_status(self, new_status: Status = None, new_phase: Phase = None, messaggio:str=""):
         """
         Imposta il nuovo status e notifica alla ai il combiamento
 
         :param new_status: il nuovo segnale
         :param new_phase: la nuova fase
+        :param messaggio: debug dello status
         """
         if (new_status is not None) and new_status != self.status:
             self.status = new_status
         if (new_phase is not None) and new_phase != self.status_phase:
             self.status_phase = new_phase
-        self.ia.unit_status_update(self.status, self.status_phase)
+        self.ia.unit_status_update(self.status, self.status_phase, messaggio)
 
     def passa_turno(self):
         self._set_status(Status.INATTIVO, Phase.START)
 
     def imposta_destinazione(self, nuova_destinazione):
-        peso, self.percorso, adiacenza = self.distanza(nuova_destinazione)
-        self.lunghezza_percorso = len(self.percorso)
-        if self.percorso:
-            self._set_status(Status.MOVIMENTO, Phase.START)
-        elif adiacenza <= 2:
-            self._set_status(Status.MOVIMENTO, Phase.FINISH)
+        new_path = peso, percorso, distanza = self.distanza(nuova_destinazione)
+        if percorso and distanza > 1:
+            self._set_status(Status.MOVIMENTO, Phase.START, new_path)
+        elif percorso and 0 <= distanza <= 1:
+            self._set_status(Status.MOVIMENTO, Phase.FINISH, new_path)
+            return
         else:
-            self._set_status(Status.MOVIMENTO, Phase.PERCORSO_INACCESSIBILE)
+            self._set_status(Status.MOVIMENTO, Phase.PERCORSO_INACCESSIBILE, new_path)
+            return
+        self.percorso = percorso
+        self.lunghezza_percorso = max(distanza-1, 0)
 
     def muovi(self):
         if self.percorso:
@@ -119,7 +123,8 @@ class Unita(Entita, ABC, Thread):
             self._deal_damage(self.attacco)
             self._set_status(Status.ATTACCO, Phase.FINISH)
         else:
-            self._set_status(Status.ATTACCO, Phase.BERSAGLIO_FUORI_RANGE)
+            msg = "port: "+str(self.portata)+", "+"pos: "+str((self.x, self.y))+", "+"tgt "+str((bersaglio.x, bersaglio.y))
+            self._set_status(Status.ATTACCO, Phase.BERSAGLIO_FUORI_RANGE, msg)
 
     def _deal_damage(self, bersaglio):
         bersaglio.get_damage(self.attacco, self)
@@ -150,7 +155,7 @@ class Unita(Entita, ABC, Thread):
             self._set_status(Status.RACCOLTA, Phase.TENTATA_RACCOLTA_NON_RISORSA)
 
     def in_range(self, bersaglio):
-        return len(self.distanza(bersaglio)[1]) <= self.portata
+        return 0 < self.distanza(bersaglio)[2] <= self.portata
 
     def azione(self, target):
         self._set_status(Status.AZIONE, Phase.START)
@@ -158,7 +163,9 @@ class Unita(Entita, ABC, Thread):
             self.esegui(target)
             self._set_status(Status.AZIONE, Phase.FINISH)
         else:
-            self._set_status(Status.AZIONE, Phase.BERSAGLIO_AZIONE_FUORI_PORTATA)
+            msg = "port: " + str(self.portata) + ", " + "pos: " + str((self.x, self.y)) + ", " + "tgt " + str(
+                (target.x, target.y))
+            self._set_status(Status.AZIONE, Phase.BERSAGLIO_AZIONE_FUORI_PORTATA, msg)
             pass
 
     def usa_forziere(self, preleva: pc.nomi_risorse = None, deposita: Risorsa = None):
