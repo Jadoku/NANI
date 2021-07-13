@@ -42,6 +42,8 @@ class Minatore(Nano):
     def esegui(self, target, *agrs):
         if isinstance(target, Muro_base):
             self._deal_damage(target)
+        else:
+            print("il bersaglio che si sta tentando di minare non è un muro base")
 
     def _level_up(self):
         self.slot_inventario += 1

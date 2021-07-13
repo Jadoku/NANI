@@ -57,7 +57,6 @@ class Player:
         self.carica_immagine("immagini/treasure_chests_32x32.png", forzieri)
         self.carica_immagine("immagini/sassi.png", {"sassi":(0, 0)})
 
-
     def update(self):
         while self.running:
             # --- GESTIONE EVENTI ---
@@ -96,7 +95,7 @@ class Player:
         self.grid(self.mappa.lato, self.latocasella, self.bordo)
 
     def __render_oggetti(self):
-        oggetti: List[Oggetto] = self.mappa.lista_oggetti_render.copy()
+        oggetti: List[Oggetto] = self.mappa.lista_oggetti_render
         for x in oggetti:
             if x.visibile or self.mostra_tutto:
                 self.main_screen.blit(self.icon[x.sprite],

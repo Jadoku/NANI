@@ -110,10 +110,9 @@ class Livello:
             return 0
 
     def remove_item(self, oggetto, destroy=False):
-        if oggetto in self.lista_oggetti:
-            self.lista_oggetti.remove(oggetto)
-        if oggetto in self.lista_oggetti_visibili:
+        if oggetto.visibile:
             self.lista_oggetti_visibili.remove(oggetto)
+        self.lista_oggetti.remove(oggetto)
         if isinstance(oggetto, Entita) and not destroy:
             for i in oggetto.inventario:
                 self.add_move(oggetto.x, oggetto.y, i, True, True)

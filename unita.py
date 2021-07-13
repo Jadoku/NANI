@@ -155,7 +155,7 @@ class Unita(Entita, ABC, Thread):
             self._set_status(Status.RACCOLTA, Phase.TENTATA_RACCOLTA_NON_RISORSA)
 
     def in_range(self, bersaglio):
-        return 0 < self.distanza(bersaglio)[2] <= self.portata
+        return self.portata >= self.distanza(bersaglio)[2] > 0
 
     def azione(self, target):
         self._set_status(Status.AZIONE, Phase.START)
