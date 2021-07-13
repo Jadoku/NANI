@@ -71,10 +71,10 @@ class Unita(Entita, ABC, Thread):
 
     def run(self):
         self._set_status(Status.INATTIVO, Phase.START)
-        while True:  # self.ferite < self.vita:
+        while True:  # self.ferite < self.vita: TODO mettere una fine del processo
             self.ia.comando()
 
-    def _set_status(self, new_status: Status = None, new_phase: Phase = None, messaggio:str=""):
+    def _set_status(self, new_status: Status = None, new_phase: Phase = None, messaggio: str = ""):
         """
         Imposta il nuovo status e notifica alla ai il combiamento
 
